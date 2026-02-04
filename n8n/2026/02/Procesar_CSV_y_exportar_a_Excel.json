@@ -1,0 +1,186 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Local File Trigger": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Code- Limpia datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code- Limpia datos": {
+      "main": [
+        [
+          {
+            "node": "Code - Procesa datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Procesa datos": {
+      "main": [
+        [
+          {
+            "node": "Code- Crea un CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code- Crea un CSV": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-10-10T20:34:15.748Z",
+  "id": "siAkTWfXRMRhkVZS",
+  "isArchived": true,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Procesar CSV y exportar a Excel",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "path": "C:\\Pruebasn8n\\REPORTEKATHE",
+        "events": [
+          "add"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        -320
+      ],
+      "id": "187ce6a0-e0fa-4c1f-add6-f6e6a26fd3ba",
+      "name": "Local File Trigger"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        -320
+      ],
+      "id": "7e8c46e5-d2de-4c36-af33-ddbd7f527df2",
+      "name": "Wait",
+      "webhookId": "cabf1994-4cb6-4f57-a54e-ac96ba439896"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.path.replace(/\\\\/g, \"/\") }}",
+        "options": {
+          "dataPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        -336
+      ],
+      "id": "5c8ec56a-42ef-4090-8b7c-e06777e4348f",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# Code- Crea un CSV (pegar en el nodo Code - Python)\nimport pandas as pd\nimport io\nimport base64\n\n# items viene del nodo anterior (Code - Procesa datos)\n# Si tu nodo entrega varias filas, items será una lista de dicts con keys en item['json']\n# Normalmente puedes hacer:\ndata_rows = [item.get('json', {}) for item in items]\n\n# Crear DataFrame\ndf = pd.DataFrame(data_rows)\n\n# Convertir a CSV en memoria\ncsv_buffer = io.StringIO()\ndf.to_csv(csv_buffer, index=False)\ncsv_string = csv_buffer.getvalue()\n\n# Codificar a base64 (n8n espera base64 en binary.data.data)\ncsv_base64 = base64.b64encode(csv_string.encode('utf-8')).decode('utf-8')\n\n# Retornar en formato binario compatible con Write node\nreturn [{\n    \"binary\": {\n        \"data\": {\n            \"data\": csv_base64,\n            \"mimeType\": \"text/csv\",\n            \"fileName\": \"reporte.csv\"\n        }\n    },\n    \"json\": {}\n}]\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        -320
+      ],
+      "id": "6c6b1ff2-77ea-402b-8aa3-17ee2648b93d",
+      "name": "Code- Crea un CSV",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const binaryData = $input.item.binary.data.data;\nconst buf = Buffer.from(binaryData, 'base64');\nconst text = buf.toString('utf-8');\n\nconst lines = text.split(/\\r?\\n/);\n\nif (lines.length > 0 && lines[0].trim().toUpperCase().startsWith(\"SEP=\")) {\n  lines.shift();\n}\n\nconst cleaned = lines.join(\"\\n\");\nconst delim = lines[0].includes(\"\\t\") ? \"\\t\" : \",\";\n\nreturn {\n  json: {\n    cleaned,\n    delimiter: delim\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        -320
+      ],
+      "id": "31ead61a-9d85-4d54-949e-ed32bf034880",
+      "name": "Code- Limpia datos"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import pandas as pd\nfrom datetime import datetime\n\ndef limpiar_nombre(nombre):\n    import re\n    import unicodedata\n    if not isinstance(nombre, str):\n        return \"\"\n    nombre = unicodedata.normalize(\"NFKD\", nombre).encode(\"ascii\", \"ignore\").decode(\"ascii\")\n    nombre = nombre.replace(\"\\ufeff\", \"\").replace(\"﻿\", \"\").strip().lower()\n    nombre = re.sub(r\"[\\s\\W]+\", \" \", nombre).strip()\n    return nombre\n\n# Obtener input y cargar CSV desde texto limpio\ntext_csv = items[0].json.get('cleaned', '')\ndelimiter = items[0].json.get('delimiter', ',')\n\nif not text_csv:\n    return []\n\n# Leer CSV con pandas\nfrom io import StringIO\ndf = pd.read_csv(StringIO(text_csv), delimiter=delimiter)\n\n# Limpiar nombres columnas\ndf.columns = [limpiar_nombre(c) for c in df.columns]\n\n# Filtros\nvh_excluir = {\"CB015\", \"CB059\", \"CB064\", \"CB089\", \"CB100\", \"CB157\", \"CB232\"}\ncols_to_remove = [\n    \"conductor\", \"inicio de viaje\", \"fecha de finalizacion\",\n    \"tiempo de viaje minutos\", \"despachador\"\n]\n\n# Eliminar filas canceladas o con itinerario \"circular sur\"\ndf = df[~df[\"estado del viaje\"].str.lower().eq(\"cancelado\")]\ndf = df[~df[\"itinerario\"].str.lower().eq(\"circular sur\")]\n\n# Filtrar por columna vehículo\nvh_keys = [\"vh.\", \"vh\", \"vehiculo\", \"vehículo\"]\nvh_col = next((col for col in df.columns if any(col.startswith(k) for k in vh_keys)), None)\nif vh_col:\n    df[vh_col] = df[vh_col].str.upper()\n    df = df[~df[vh_col].isin(vh_excluir)]\n    df = df[df[vh_col].notna() & (df[vh_col] != \"\")]\n\n# Eliminar columnas innecesarias\ndf = df.drop(columns=[c for c in cols_to_remove if c in df.columns], errors='ignore')\n\n# Formatear fechas y horas\nformatos_posibles = [\n    \"%d/%m/%Y %I:%M:%S %p\", \"%d/%m/%Y %I:%M %p\",\n    \"%d/%m/%Y %H:%M:%S\", \"%d/%m/%Y %H:%M\",\n    \"%Y-%m-%d %H:%M:%S\", \"%Y-%m-%d %H:%M\",\n    \"%d-%m-%Y %H:%M:%S\", \"%d-%m-%Y %H:%M\"\n]\n\ndef parse_fecha_hora(s):\n    for fmt in formatos_posibles:\n        try:\n            return datetime.strptime(s, fmt)\n        except:\n            continue\n    return None\n\ndf[\"fecha_programada\"] = df[\"hora programada\"].apply(lambda x: parse_fecha_hora(x).strftime(\"%d/%m/%Y\") if pd.notnull(x) and parse_fecha_hora(x) else \"\")\ndf[\"hora_programada_24h\"] = df[\"hora programada\"].apply(lambda x: parse_fecha_hora(x).strftime(\"%H:%M:%S\") if pd.notnull(x) and parse_fecha_hora(x) else \"\")\n\n# Limpieza de itinerario\ndf[\"itinerario\"] = df[\"itinerario\"].str.lower().str.replace(\"madrugada\", \"\").str.strip().str.upper()\n\n# Agregar columna número\ndf[\"numero\"] = 1\n\n# Reordenar y seleccionar columnas finales\ncolumnas_finales = [\n    \"fecha_programada\", \n    vh_col or \"vh\", \n    \"hora_programada_24h\", \n    \"itinerario\", \n    \"numero\", \n    \"pasajeros movilizados\", \n    \"estado del viaje\"\n]\n\n# Asegurarse que las columnas existan\ncolumnas_finales = [c for c in columnas_finales if c in df.columns]\n\ndf_final = df[columnas_finales]\n\n# Formatear salida para n8n\noutput = []\nfor _, row in df_final.iterrows():\n    output.append({\"json\": row.dropna().to_dict()})\n\nreturn output\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        -320
+      ],
+      "id": "cedb713f-df15-4d33-8aaf-035f59a150f1",
+      "name": "Code - Procesa datos"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-10-10T20:34:15.753Z",
+      "createdAt": "2025-10-10T20:34:15.753Z",
+      "role": "workflow:owner",
+      "workflowId": "siAkTWfXRMRhkVZS",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-14T16:22:17.000Z",
+  "versionId": "b58eb1f1-be34-4ead-8c4d-ad990233f255"
+}
