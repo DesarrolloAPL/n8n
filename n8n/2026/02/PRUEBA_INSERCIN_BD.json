@@ -1,0 +1,346 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "SELECT - BD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Microsoft SQL2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Microsoft SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SELECT - BD": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SI - NULL": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "VARIABLE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VARIABLE": {
+      "main": [
+        [
+          {
+            "node": "Microsoft SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "SI - NULL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-23T18:42:25.232Z",
+  "id": "ykA0KMmKJAvxjujO",
+  "isArchived": true,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "PRUEBA INSERCIÓN BD",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -992,
+        -160
+      ],
+      "id": "23da3c87-4083-4e75-9298-0ba3fd19de36",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO autobusesaccess.dbo.ImportReciboCaja\n(IdGestionRuta, Vehiculo, Fecha, RegistroFinal, RegistroInicial, Nopax, FechaContab, ConcepTransac, IntegradoCivica, PlenoCivica, SegundaConsig, TickRecMorCan, TickRecMorValu, TickRecMorValTot, TickVenBlaCan, TickVenBlaValu, TickVenBlaValorTot, PasajPlenSencCan, PasajPlenSencValu, PasajPlenSencValorTot, ProdVehic, IngrTickMetroVend, Aseo, Total_A_Consignar, FechaConsig, ValorConsignado, CtoBco, Diferencia, Conductor, CedConductor, Comentario)\nVALUES({{ $json.IdGestionRutaV }} + 1, '5008-1', '2025-10-01', '0', '0', '0', '2025-10-01', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '496400', '0', '0', '0', '496400', '2025-10-01', '496400', '1103-BGTA-CTE', '400', 'TORO RIVERA JUAN GUILLERMO', '98709571', '');\n"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        -80
+      ],
+      "id": "af532a0b-9b17-40d2-9c18-3e91fa66e3f8",
+      "name": "Microsoft SQL",
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f5bc79a5-ee44-4099-93f1-3238af14e21b",
+              "leftValue": "={{ $json.IdGestionRutaV }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        -256
+      ],
+      "id": "5860423d-929e-41ef-9e15-7658281d3de4",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4903d329-6624-4e79-953e-b7fb114d4f00",
+              "name": "IdGestionRutaV",
+              "value": "=0",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -464,
+        -256
+      ],
+      "id": "6c3b2b6b-1d7d-44a9-b082-dad5d566fbf0",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO autobusesaccess.dbo.ImportReciboCaja\n(IdGestionRuta, Vehiculo, Fecha, RegistroFinal, RegistroInicial, Nopax, FechaContab, ConcepTransac, IntegradoCivica, PlenoCivica, SegundaConsig, TickRecMorCan, TickRecMorValu, TickRecMorValTot, TickVenBlaCan, TickVenBlaValu, TickVenBlaValorTot, PasajPlenSencCan, PasajPlenSencValu, PasajPlenSencValorTot, ProdVehic, IngrTickMetroVend, Aseo, Total_A_Consignar, FechaConsig, ValorConsignado, CtoBco, Diferencia, Conductor, CedConductor, Comentario)\nVALUES(1, '5008-1', '2025-10-01', '0', '0', '0', '2025-10-01', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '496400', '0', '0', '0', '496400', '2025-10-01', '496400', '1103-BGTA-CTE', '400', 'TORO RIVERA JUAN GUILLERMO', '98709571', '');\n"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        -336
+      ],
+      "id": "bfafb71c-64d2-4a6a-825a-07205a75e73c",
+      "name": "Microsoft SQL2",
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT MAX(IdGestionRuta) as RutaV From autobusesaccess.dbo.ImportReciboCaja"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        -864,
+        -160
+      ],
+      "id": "2bb510a8-72d4-4555-b708-7435851edf03",
+      "name": "SELECT - BD",
+      "alwaysOutputData": true,
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5f7050ac-5009-42b4-8edc-b3a27cdff6af",
+              "leftValue": "={{ $json.IdGestionRuta }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -608,
+        -160
+      ],
+      "id": "ceb50625-cb91-4f4e-9627-00b26831e664",
+      "name": "SI - NULL"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "176e5572-c4d7-4616-96e4-f46757047f72",
+              "name": "IdGestionRutaV",
+              "value": "={{ $json.IdGestionRuta }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -464,
+        -80
+      ],
+      "id": "b1db048d-f819-4d88-bb2d-4c0c39b3c033",
+      "name": "VARIABLE"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "46a42238-7b8f-4fd2-bb9c-2d1fcc99849e",
+              "name": "IdGestionRuta",
+              "value": "={{ $node[\"SELECT - BD\"].json[\"RutaV\"] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -736,
+        -160
+      ],
+      "id": "eee29983-73f8-4553-909c-97f936d7f3e5",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-10-23T18:42:25.234Z",
+      "createdAt": "2025-10-23T18:42:25.234Z",
+      "role": "workflow:owner",
+      "workflowId": "ykA0KMmKJAvxjujO",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-23T19:54:37.119Z",
+      "createdAt": "2025-10-23T19:54:37.119Z",
+      "id": "aAfEvsvkYyaP0ilz",
+      "name": "ANA"
+    },
+    {
+      "updatedAt": "2025-10-14T16:34:39.008Z",
+      "createdAt": "2025-10-14T16:34:39.008Z",
+      "id": "lC9jAlHqvxlSGKVl",
+      "name": "APL"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2026-02-03T19:25:48.000Z",
+  "versionId": "8e4c540f-11d2-4086-b264-158302ee89be"
+}
