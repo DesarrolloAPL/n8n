@@ -1,0 +1,264 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2025-11-18T20:05:10.787Z",
+    "createdAt": "2025-11-18T20:05:10.787Z",
+    "versionId": "f87a2bfe-75dd-48de-b6e6-be35eb3700ba",
+    "workflowId": "RuoJJRTkzTJuBC8i",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "iniciarsesionrecepcion",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -528,
+          -80
+        ],
+        "id": "a9214f88-e3bc-4a21-8d50-680f6d6592ef",
+        "name": "Webhook",
+        "webhookId": "d7125ce6-6268-4e94-a965-e3df49c9af53"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "EXEC usp_BuscarRolPorCedulaYNombre {{ $json.body.password }}, '{{ $json.body.identifier }}'"
+        },
+        "type": "n8n-nodes-base.microsoftSql",
+        "typeVersion": 1.1,
+        "position": [
+          -352,
+          -96
+        ],
+        "id": "b71f158f-9788-4f14-a92d-dc4dd70a3350",
+        "name": "Microsoft SQL",
+        "alwaysOutputData": false,
+        "credentials": {
+          "microsoftSql": {
+            "id": "wKQTlyd8tnchigCR",
+            "name": "Microsoft SQL - BD Prueba"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "allIncomingItems",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          80,
+          -80
+        ],
+        "id": "eed0d834-e5f4-485d-a671-86427c16ffd4",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={\n  \"rol\": \"{{ $json.rol }}\",\n  \"cedula\": {{ $json.cedula }},\n  \"nombre\":  \"{{ $json.nombre }}\",\n  \"puestoId\": \"{{ $json.puestoId }}\"\n}\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -144,
+          -96
+        ],
+        "id": "d9b6cb07-0653-41bd-bcad-a59c83d2aec1",
+        "name": "jsonfinal"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Microsoft SQL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Microsoft SQL": {
+        "main": [
+          [
+            {
+              "node": "jsonfinal",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "jsonfinal": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Andres Orozco",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "activeVersionId": "f87a2bfe-75dd-48de-b6e6-be35eb3700ba",
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Microsoft SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Microsoft SQL": {
+      "main": [
+        [
+          {
+            "node": "jsonfinal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "jsonfinal": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-11T19:06:12.111Z",
+  "id": "RuoJJRTkzTJuBC8i",
+  "isArchived": false,
+  "meta": null,
+  "name": "INICIO SESION APP",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "iniciarsesionrecepcion",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -528,
+        -80
+      ],
+      "id": "a9214f88-e3bc-4a21-8d50-680f6d6592ef",
+      "name": "Webhook",
+      "webhookId": "d7125ce6-6268-4e94-a965-e3df49c9af53"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "EXEC usp_BuscarRolPorCedulaYNombre {{ $json.body.password }}, '{{ $json.body.identifier }}'"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        -352,
+        -96
+      ],
+      "id": "b71f158f-9788-4f14-a92d-dc4dd70a3350",
+      "name": "Microsoft SQL",
+      "alwaysOutputData": false,
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        80,
+        -80
+      ],
+      "id": "eed0d834-e5f4-485d-a671-86427c16ffd4",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"rol\": \"{{ $json.rol }}\",\n  \"cedula\": {{ $json.cedula }},\n  \"nombre\":  \"{{ $json.nombre }}\",\n  \"puestoId\": \"{{ $json.puestoId }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -144,
+        -96
+      ],
+      "id": "d9b6cb07-0653-41bd-bcad-a59c83d2aec1",
+      "name": "jsonfinal"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-11T19:06:12.113Z",
+      "createdAt": "2025-11-11T19:06:12.113Z",
+      "role": "workflow:owner",
+      "workflowId": "RuoJJRTkzTJuBC8i",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-11-11T21:30:37.655Z",
+      "createdAt": "2025-11-11T21:30:37.655Z",
+      "id": "j5HaHGDV2jbmNS27",
+      "name": "NUEVA APP"
+    },
+    {
+      "updatedAt": "2025-11-12T19:46:15.693Z",
+      "createdAt": "2025-11-12T19:46:15.693Z",
+      "id": "s96wOANoNXqa9VfN",
+      "name": "FUNCIONAL"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-18T20:05:10.000Z",
+  "versionId": "f87a2bfe-75dd-48de-b6e6-be35eb3700ba"
+}
