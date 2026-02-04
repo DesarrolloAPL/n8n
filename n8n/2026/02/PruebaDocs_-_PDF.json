@@ -1,0 +1,63 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {},
+  "createdAt": "2025-12-02T19:54:03.713Z",
+  "id": "u22tMvxRerTzhfmb",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "PruebaDocs - PDF",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2826f121-f9ab-4915-8b72-fab6c981edb1",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-12-02T19:54:03.718Z",
+      "createdAt": "2025-12-02T19:54:03.718Z",
+      "role": "workflow:owner",
+      "workflowId": "u22tMvxRerTzhfmb",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-29T13:12:44.332Z",
+      "createdAt": "2025-10-29T13:12:44.332Z",
+      "id": "45xfhDxxxasaqnRM",
+      "name": "PRUEBA"
+    },
+    {
+      "updatedAt": "2025-11-11T21:30:41.310Z",
+      "createdAt": "2025-11-11T21:30:41.310Z",
+      "id": "rEeAxuxADLe4crWM",
+      "name": "TEST"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-12-05T19:31:46.000Z",
+  "versionId": "b4527898-8458-4086-94f0-1257a503f29d"
+}
