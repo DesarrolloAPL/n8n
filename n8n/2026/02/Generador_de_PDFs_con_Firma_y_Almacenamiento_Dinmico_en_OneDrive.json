@@ -1,0 +1,556 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "1. Webhook: Recibir Datos": {
+      "main": [
+        [
+          {
+            "node": "2. Descargar Firma PNG",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "4A. Copiar Plantilla Documento A",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "6A. Copiar Plantilla Documento B",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "9. Formatear Nombre Carpeta (Fecha)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Descargar Firma PNG": {
+      "main": [
+        [
+          {
+            "node": "3. Renombrar Binario Firma",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Renombrar Binario Firma": {
+      "main": [
+        [
+          {
+            "node": "8. Combinar Firma y PDFs (Binarios)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4A. Copiar Plantilla Documento A": {
+      "main": [
+        [
+          {
+            "node": "4B. Rellenar y Exportar PDF A",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4B. Rellenar y Exportar PDF A": {
+      "main": [
+        [
+          {
+            "node": "4C. Exportar PDF A (Binario)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4C. Exportar PDF A (Binario)": {
+      "main": [
+        [
+          {
+            "node": "5. Renombrar Binario PDF A",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5. Renombrar Binario PDF A": {
+      "main": [
+        [
+          {
+            "node": "8. Combinar Firma y PDFs (Binarios)",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "6A. Copiar Plantilla Documento B": {
+      "main": [
+        [
+          {
+            "node": "6B. Rellenar y Exportar PDF B",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6B. Rellenar y Exportar PDF B": {
+      "main": [
+        [
+          {
+            "node": "6C. Exportar PDF B (Binario)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6C. Exportar PDF B (Binario)": {
+      "main": [
+        [
+          {
+            "node": "7. Renombrar Binario PDF B",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "12. Preparar Mensaje WATI/WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "13. Notificar Vía WATI/WhatsApp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "14. Responder Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-29T13:12:25.638Z",
+  "id": "A4xSwgrk5F1YkRqj",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Generador de PDFs con Firma y Almacenamiento Dinámico en OneDrive",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "57908062-3cf8-4bc4-9a34-cbe92e921f70",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c7546cf9-aef8-4972-b0d1-d1709c825bbf",
+      "name": "1. Webhook: Recibir Datos",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -480,
+        224
+      ],
+      "typeVersion": 1,
+      "webhookId": "57908062-3cf8-4bc4-9a34-cbe92e921f70",
+      "notes": "Punto de entrada. Recibe datos del formulario (ej. 'nombre') y la URL de la firma ('signature_url')."
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body.signature_url }}",
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "id": "12593552-75e4-481c-a071-1102b98d54d1",
+      "name": "2. Descargar Firma PNG",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -224,
+        16
+      ],
+      "typeVersion": 4.2,
+      "notes": "Descarga el archivo PNG desde la URL. Guarda el contenido como dato binario (similar al manejo de media en flujos de WhatsApp [1])."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": []
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "0c5612c0-1939-49cb-b11b-3a119f897475",
+      "name": "3. Renombrar Binario Firma",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        32,
+        16
+      ],
+      "typeVersion": 3.4,
+      "notes": "Renombra la propiedad binaria genérica ('data') a 'signature_png'. Esto es crucial para identificar los archivos en la fase de subida a OneDrive."
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "<ID_PLANTILLA_DOC_A>"
+        },
+        "name": "=Doc A - {{ $('1. Webhook: Recibir Datos').item.json.body.nombre }}",
+        "options": {}
+      },
+      "id": "29b07c44-315e-4cd3-8916-e171cf3db78a",
+      "name": "4A. Copiar Plantilla Documento A",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -224,
+        144
+      ],
+      "typeVersion": 3,
+      "notes": "Crea una copia del primer documento parametrizado. Esta operación es fundamental en la automatización de documentos [2]."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "<URL_DEL_APPS_SCRIPT_FILLDOCUMENT_A>",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "docId",
+              "value": "={{ $('4A. Copiar Plantilla Documento A').item.json.id }}"
+            },
+            {
+              "name": "data",
+              "value": "={\n  \"NOMBRE\": \"={{ $('1. Webhook: Recibir Datos').item.json.body.nombre }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5b07efc8-c5d4-4918-8852-59431035cf89",
+      "name": "4B. Rellenar y Exportar PDF A",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        32,
+        144
+      ],
+      "typeVersion": 4.2,
+      "notes": "Simula la llamada a un servicio externo (Apps Script) para rellenar el documento. Se asume que la respuesta incluye el ID del documento rellenado."
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/drive/v3/files/{{ $('4A. Copiar Plantilla Documento A').item.json.id }}?mimeType=application/pdf&alt=media",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "id": "0cf6cb8a-e53d-4770-819e-2429f0f63741",
+      "name": "4C. Exportar PDF A (Binario)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        288,
+        112
+      ],
+      "typeVersion": 4.2,
+      "notes": "Convierte el Google Doc a PDF binario utilizando la API de Drive [3]. El nodo Set posterior renombrará el binario."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": []
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "6f6812ba-961e-4c0d-8994-0328ee81c2a5",
+      "name": "5. Renombrar Binario PDF A",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        528,
+        112
+      ],
+      "typeVersion": 3.4,
+      "notes": "Renombra el binario para facilitar su identificación y guardado posterior en OneDrive."
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "<ID_PLANTILLA_DOC_B>"
+        },
+        "name": "=Doc B - {{ $('1. Webhook: Recibir Datos').item.json.body.nombre }}",
+        "options": {}
+      },
+      "id": "c605c07f-89aa-4266-8b30-c6b814ecafbc",
+      "name": "6A. Copiar Plantilla Documento B",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        -224,
+        304
+      ],
+      "typeVersion": 3,
+      "notes": "Copia la segunda plantilla de documento (Documento B)."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "<URL_DEL_APPS_SCRIPT_FILLDOCUMENT_B>",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "docId",
+              "value": "={{ $('6A. Copiar Plantilla Documento B').item.json.id }}"
+            },
+            {
+              "name": "data",
+              "value": "={\n  \"DIRECCION\": \"={{ $('1. Webhook: Recibir Datos').item.json.body.direccion }}\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5aff3fbc-83b3-409e-8a13-48c606ee1a5f",
+      "name": "6B. Rellenar y Exportar PDF B",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        32,
+        304
+      ],
+      "typeVersion": 4.2,
+      "notes": "Rellena el Documento B."
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/drive/v3/files/{{ $('6A. Copiar Plantilla Documento B').item.json.id }}?mimeType=application/pdf&alt=media",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "id": "0f86d37f-425a-4f1c-a4f9-9dbfc18489c3",
+      "name": "6C. Exportar PDF B (Binario)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        288,
+        272
+      ],
+      "typeVersion": 4.2,
+      "notes": "Convierte el Doc B a PDF binario."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": []
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "fce166ea-b709-4eb9-b569-0bd23642dd74",
+      "name": "7. Renombrar Binario PDF B",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        528,
+        272
+      ],
+      "typeVersion": 3.4,
+      "notes": "Renombra el binario para el Documento B."
+    },
+    {
+      "parameters": {
+        "mode": "merge"
+      },
+      "id": "5434b0e8-0850-48c3-8380-6627d8f119b6",
+      "name": "8. Combinar Firma y PDFs (Binarios)",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        720,
+        0
+      ],
+      "typeVersion": 3,
+      "notes": "Fusiona los tres flujos de archivos binarios (Firma, PDF A, PDF B) en un solo conjunto de ítems para subirlos a OneDrive."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "715c25bb-b2c3-4272-accf-1757a506495d",
+      "name": "9. Formatear Nombre Carpeta (Fecha)",
+      "type": "n8n-nodes-base.dateTime",
+      "position": [
+        992,
+        208
+      ],
+      "typeVersion": 1,
+      "notes": "Genera una cadena de tiempo formateada para garantizar un nombre de carpeta único, siguiendo el patrón de fecha y hora."
+    },
+    {
+      "parameters": {},
+      "id": "f4662c27-43b8-47fc-8f1b-c4b87629c04d",
+      "name": "10. OneDrive: Crear Carpeta Dinámica",
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "position": [
+        1280,
+        176
+      ],
+      "typeVersion": 2,
+      "credentials": {},
+      "notes": "Crea una carpeta nueva en OneDrive con el nombre del usuario y la fecha/hora actual, cumpliendo con el requisito de almacenamiento dinámico."
+    },
+    {
+      "parameters": {},
+      "id": "81d74d0c-9770-435d-bb8a-66201e67cec5",
+      "name": "11. OneDrive: Subir Archivos y Firma",
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "position": [
+        1536,
+        176
+      ],
+      "typeVersion": 2,
+      "credentials": {},
+      "notes": "Sube todos los archivos binarios combinados (PDF A, PDF B, Firma PNG) a la carpeta recién creada. Nota: Se utiliza '{{ $binary.getFileName() }}' para nombrar los archivos basándose en la propiedad binaria renombrada previamente."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "mensaje_final_whatsapp",
+              "type": "string",
+              "value": "=¡Hola {{ $('1. Webhook: Recibir Datos').item.json.body.nombre }}! Tus documentos han sido procesados y guardados exitosamente. Tu carpeta personal de OneDrive es: {{ $('10. OneDrive: Crear Carpeta Dinámica').item.json.webUrl }}. Gracias por usar WATI."
+            },
+            {
+              "name": "recipient_number",
+              "type": "string",
+              "value": "={{ $('1. Webhook: Recibir Datos').item.json.body.whatsapp_number }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9a056fd1-1f3f-43fa-be92-b29c9753fa03",
+      "name": "12. Preparar Mensaje WATI/WhatsApp",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1776,
+        176
+      ],
+      "typeVersion": 3.4,
+      "notes": "Construye el mensaje de confirmación, incluyendo el enlace a la carpeta de OneDrive si está disponible."
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "<ID_NUMERO_TELEFONO>",
+        "recipientPhoneNumber": "={{ $json.recipient_number }}",
+        "textBody": "={{ $json.mensaje_final_whatsapp }}",
+        "additionalFields": {}
+      },
+      "id": "773c78a8-bdd0-4688-8150-117a01a8f7cd",
+      "name": "13. Notificar Vía WATI/WhatsApp",
+      "type": "n8n-nodes-base.whatsApp",
+      "position": [
+        2032,
+        176
+      ],
+      "typeVersion": 1,
+      "webhookId": "e7af56ea-a34a-42be-87a0-4c7b9a7595a3",
+      "notes": "Envía el mensaje de confirmación al usuario a través del nodo WhatsApp Business Cloud, utilizado frecuentemente para este tipo de comunicaciones [4, 5]."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "524d6006-08f3-4221-a7ae-fb4e5a3f7559",
+      "name": "14. Responder Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        2288,
+        176
+      ],
+      "typeVersion": 1,
+      "notes": "Finaliza la solicitud del Webhook con un código 200 (OK)."
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "create",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        368
+      ],
+      "id": "d836a434-d7cd-47fb-8b61-ef70351cace9",
+      "name": "Create a folder"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        384
+      ],
+      "id": "ac5133f8-9bf7-4bd8-b144-ba8b2dc6710b",
+      "name": "Upload a file"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-10-29T13:12:25.644Z",
+      "createdAt": "2025-10-29T13:12:25.644Z",
+      "role": "workflow:owner",
+      "workflowId": "A4xSwgrk5F1YkRqj",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-29T13:12:44.332Z",
+      "createdAt": "2025-10-29T13:12:44.332Z",
+      "id": "45xfhDxxxasaqnRM",
+      "name": "PRUEBA"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-29T13:12:45.000Z",
+  "versionId": "7acbb7df-885d-4283-8c11-8d7b6830fa5e"
+}
