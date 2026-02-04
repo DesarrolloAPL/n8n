@@ -3,13 +3,18 @@
   "activeVersion": null,
   "activeVersionId": null,
   "connections": {
-    "backup-progress": {
+    "Start": {
       "main": [
         [
           {
             "node": "Repo Data",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
@@ -146,8 +151,8 @@
       ]
     }
   },
-  "createdAt": "2026-02-03T16:55:40.418Z",
-  "id": "849HdE7bc8QoRpu6",
+  "createdAt": "2026-02-03T16:53:53.181Z",
+  "id": "MQISIXamqpVmxpej8dT4k",
   "isArchived": true,
   "meta": {
     "templateCredsSetupCompleted": true
@@ -158,14 +163,14 @@
       "parameters": {
         "inputSource": "passthrough"
       },
-      "id": "c055762a-8fe7-4141-a639-df2372f30060",
-      "typeVersion": 1.1,
-      "name": "backup-progress",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
       "position": [
-        -1168,
-        752
-      ]
+        -1824,
+        224
+      ],
+      "id": "6e197321-817d-441b-b28e-7ae5b0e94663",
+      "name": "Start"
     },
     {
       "parameters": {
@@ -196,10 +201,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -976,
-        752
+        -1584,
+        96
       ],
-      "id": "8ba0fc40-68c3-460a-a6d7-f08a7a44987e",
+      "id": "3587d650-7091-4f3b-94bf-984afb227aa6",
       "name": "Repo Data"
     },
     {
@@ -216,17 +221,17 @@
           "value": "={{ $json.repoName }}",
           "mode": "name"
         },
-        "filePath": "={{ $json.repoPath }}{{ $('backup-progress').item.json.id }}.json",
+        "filePath": "={{ $json.repoPath }}{{ $('Start').item.json.id }}.json",
         "asBinaryProperty": false,
         "additionalParameters": {}
       },
       "type": "n8n-nodes-base.github",
       "typeVersion": 1.1,
       "position": [
-        -768,
-        752
+        -1376,
+        96
       ],
-      "id": "fe6a2825-32a5-4ad7-a885-d9feeaf862ff",
+      "id": "0b41863b-37cb-4db5-9989-d1245ec4f1f8",
       "name": "Get a file",
       "webhookId": "cc6a2a33-8b62-465a-b321-9212e2490a72",
       "alwaysOutputData": true,
@@ -276,10 +281,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -560,
-        752
+        -1168,
+        96
       ],
-      "id": "99045c48-162b-4c23-a567-b65326724d0c",
+      "id": "83e1bc52-e69e-4a52-a729-f3f05594491c",
       "name": "If"
     },
     {
@@ -290,10 +295,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -320,
-        704
+        -928,
+        48
       ],
-      "id": "ce5aa896-801c-4326-a3f2-174a562654ed",
+      "id": "c12cf03f-d975-429e-b7ae-614e8e515f25",
       "name": "HTTP Request"
     },
     {
@@ -301,10 +306,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -64,
-        864
+        -672,
+        208
       ],
-      "id": "9af83480-2a3b-4bf4-a0be-3474c72b6e1e",
+      "id": "7be343b7-4716-4813-a9ab-38350b4c6609",
       "name": "Merge"
     },
     {
@@ -392,10 +397,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        336,
-        848
+        -272,
+        192
       ],
-      "id": "03cd80d7-64d4-4fc0-8664-dffe12a9762c",
+      "id": "75096ba2-a365-4dfe-b4eb-c1b017ba2828",
       "name": "Switch"
     },
     {
@@ -411,17 +416,17 @@
           "value": "={{ $('Repo Data').item.json.repoName }}",
           "mode": "name"
         },
-        "filePath": "={{ $('Repo Data').item.json.repoPath }}{{$('backup-progress').first().json.id}}.json",
+        "filePath": "={{ $('Repo Data').item.json.repoPath }}{{$('Start').first().json.id}}.json",
         "fileContent": "={{$('isDiffOrNew').item.json[\"n8n_data_stringy\"]}}",
-        "commitMessage": "={{$('backup-progress').first().json.name}} ({{$json.github_status}})"
+        "commitMessage": "={{$('Start').first().json.name}} ({{$json.github_status}})"
       },
       "type": "n8n-nodes-base.github",
       "typeVersion": 1.1,
       "position": [
-        608,
-        656
+        0,
+        0
       ],
-      "id": "101c30ab-0339-4c73-857b-9e7c75b4be8f",
+      "id": "fcc431c5-7869-492c-9aec-33f1792c8c0d",
       "name": "Create a file",
       "webhookId": "588fe195-b8a6-4b5b-81e6-bf4d47f02e86",
       "credentials": {
@@ -438,10 +443,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        144,
-        864
+        -464,
+        208
       ],
-      "id": "46ad724b-422d-4099-bc74-1701b396ebc4",
+      "id": "587b7f1b-ce5b-48ae-81d9-b9928478671a",
       "name": "isDiffOrNew"
     },
     {
@@ -458,17 +463,17 @@
           "value": "={{ $('Repo Data').item.json.repoName }}",
           "mode": "name"
         },
-        "filePath": "={{ $('Repo Data').item.json.repoPath }}{{$('backup-progress').first().json.id}}.json",
+        "filePath": "={{ $('Repo Data').item.json.repoPath }}{{$('Start').first().json.id}}.json",
         "fileContent": "={{$('isDiffOrNew').item.json[\"n8n_data_stringy\"]}}",
-        "commitMessage": "={{$('backup-progress').first().json.name}} ({{ $('backup-progress').item.json.isArchived ? '(Archived)' : $json.github_status }})"
+        "commitMessage": "={{$('Start').first().json.name}} ({{ $('Start').item.json.isArchived ? '(Archived)' : $json.github_status }})"
       },
       "type": "n8n-nodes-base.github",
       "typeVersion": 1.1,
       "position": [
-        608,
-        864
+        0,
+        208
       ],
-      "id": "172540b4-e234-4be2-8248-c7c46ddd5d36",
+      "id": "2703fdbf-c78b-41b7-8486-b6d6660d88df",
       "name": "Edit a file",
       "webhookId": "588fe195-b8a6-4b5b-81e6-bf4d47f02e86",
       "credentials": {
@@ -483,10 +488,10 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        624,
-        1072
+        16,
+        416
       ],
-      "id": "aabcc923-ff2f-4092-ac1c-cf3ffac997d8",
+      "id": "c6ad2ffb-77f9-40c5-907f-7c242dbafcd0",
       "name": "No Operation, do nothing"
     },
     {
@@ -506,10 +511,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1056,
-        864
+        448,
+        208
       ],
-      "id": "b10b23f1-5284-4e03-979d-1c1e72161493",
+      "id": "b434f1ee-f126-4680-b0e7-3f2f38055031",
       "name": "Return"
     }
   ],
@@ -520,16 +525,16 @@
   },
   "shared": [
     {
-      "updatedAt": "2026-02-03T16:55:40.419Z",
-      "createdAt": "2026-02-03T16:55:40.419Z",
+      "updatedAt": "2026-02-03T16:53:53.183Z",
+      "createdAt": "2026-02-03T16:53:53.183Z",
       "role": "workflow:owner",
-      "workflowId": "849HdE7bc8QoRpu6",
+      "workflowId": "MQISIXamqpVmxpej8dT4k",
       "projectId": "qybvWgNPA3kFWQla"
     }
   ],
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-02-03T16:58:58.000Z",
-  "versionId": "3ac5c839-8ab9-44c8-940b-b02fd478059e"
+  "updatedAt": "2026-02-03T16:59:03.000Z",
+  "versionId": "26f4a11d-0e04-475e-8ba8-75a551f0d0d2"
 }
