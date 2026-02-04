@@ -1,0 +1,210 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2025-11-28T19:40:11.726Z",
+    "createdAt": "2025-11-28T19:40:11.726Z",
+    "versionId": "6d75c965-d515-4eae-9ff6-d84a813c09dc",
+    "workflowId": "qoAn38ySnPV8P1IC",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "actualizarusuarioterminado",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "09fff732-2580-4f98-a1fa-92586b200a04",
+        "name": "Webhook",
+        "webhookId": "704e8e2b-702f-4ba9-bdb4-3c022a96e332"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "update [dbo].[usuario] \n  set [dbo].[usuario].[estado] ='terminado'\n  where [dbo].[usuario].[cedula] = '{{ $json.body.cedula }}'"
+        },
+        "type": "n8n-nodes-base.microsoftSql",
+        "typeVersion": 1.1,
+        "position": [
+          208,
+          0
+        ],
+        "id": "f4fab8a5-3bc8-4575-98a4-645607ff5fb9",
+        "name": "Microsoft SQL",
+        "credentials": {
+          "microsoftSql": {
+            "id": "wKQTlyd8tnchigCR",
+            "name": "Microsoft SQL - BD Prueba"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          416,
+          0
+        ],
+        "id": "05d7bb81-5800-486d-8740-9828815403a5",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Microsoft SQL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Microsoft SQL": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Andres Orozco",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "activeVersionId": "6d75c965-d515-4eae-9ff6-d84a813c09dc",
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Microsoft SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Microsoft SQL": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-21T16:11:32.320Z",
+  "id": "qoAn38ySnPV8P1IC",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Actualizar usuario terminado",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "actualizarusuarioterminado",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "09fff732-2580-4f98-a1fa-92586b200a04",
+      "name": "Webhook",
+      "webhookId": "704e8e2b-702f-4ba9-bdb4-3c022a96e332"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "update [dbo].[usuario] \n  set [dbo].[usuario].[estado] ='terminado'\n  where [dbo].[usuario].[cedula] = '{{ $json.body.cedula }}'"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f4fab8a5-3bc8-4575-98a4-645607ff5fb9",
+      "name": "Microsoft SQL",
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "05d7bb81-5800-486d-8740-9828815403a5",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-21T16:11:32.325Z",
+      "createdAt": "2025-11-21T16:11:32.325Z",
+      "role": "workflow:owner",
+      "workflowId": "qoAn38ySnPV8P1IC",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-29T13:12:44.332Z",
+      "createdAt": "2025-10-29T13:12:44.332Z",
+      "id": "45xfhDxxxasaqnRM",
+      "name": "PRUEBA"
+    },
+    {
+      "updatedAt": "2025-11-12T19:46:15.693Z",
+      "createdAt": "2025-11-12T19:46:15.693Z",
+      "id": "s96wOANoNXqa9VfN",
+      "name": "FUNCIONAL"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-28T19:40:11.000Z",
+  "versionId": "6d75c965-d515-4eae-9ff6-d84a813c09dc"
+}
