@@ -1,0 +1,210 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2025-11-28T19:34:12.567Z",
+    "createdAt": "2025-11-28T19:34:12.567Z",
+    "versionId": "69d98d39-9f0a-4ea4-a193-f3bfc329ea3e",
+    "workflowId": "qI6HK2pW5qaDRh3w",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "guardarfirma",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "068d87a2-6e68-4154-9001-ea68227208e6",
+        "name": "Webhook",
+        "webhookId": "d7415c07-7c81-4800-952b-75bd20d2e940"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE TS_USUARIOS\n   SET\n       FirmaPath = '{{ $json.body.firmaUrl }}',\n       FechaFirma = GETDATE(),\n       Estado = 'terminado'\n   WHERE Cedula = '{{ $json.body.cedula }}';"
+        },
+        "type": "n8n-nodes-base.microsoftSql",
+        "typeVersion": 1.1,
+        "position": [
+          208,
+          0
+        ],
+        "id": "17f4d527-0d25-49c7-a16b-2368a9c4d161",
+        "name": "Microsoft SQL",
+        "credentials": {
+          "microsoftSql": {
+            "id": "wKQTlyd8tnchigCR",
+            "name": "Microsoft SQL - BD Prueba"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          416,
+          0
+        ],
+        "id": "921d91c3-553f-4629-b0d3-b1001124a82b",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Microsoft SQL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Microsoft SQL": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Andres Orozco",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "activeVersionId": "69d98d39-9f0a-4ea4-a193-f3bfc329ea3e",
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Microsoft SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Microsoft SQL": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-06T20:00:39.982Z",
+  "id": "qI6HK2pW5qaDRh3w",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Firma Recepcion",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "guardarfirma",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "068d87a2-6e68-4154-9001-ea68227208e6",
+      "name": "Webhook",
+      "webhookId": "d7415c07-7c81-4800-952b-75bd20d2e940"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE TS_USUARIOS\n   SET\n       FirmaPath = '{{ $json.body.firmaUrl }}',\n       FechaFirma = GETDATE(),\n       Estado = 'terminado'\n   WHERE Cedula = '{{ $json.body.cedula }}';"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "17f4d527-0d25-49c7-a16b-2368a9c4d161",
+      "name": "Microsoft SQL",
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "921d91c3-553f-4629-b0d3-b1001124a82b",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-06T20:00:39.988Z",
+      "createdAt": "2025-11-06T20:00:39.988Z",
+      "role": "workflow:owner",
+      "workflowId": "qI6HK2pW5qaDRh3w",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-14T16:34:39.008Z",
+      "createdAt": "2025-10-14T16:34:39.008Z",
+      "id": "lC9jAlHqvxlSGKVl",
+      "name": "APL"
+    },
+    {
+      "updatedAt": "2025-11-12T19:46:15.693Z",
+      "createdAt": "2025-11-12T19:46:15.693Z",
+      "id": "s96wOANoNXqa9VfN",
+      "name": "FUNCIONAL"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-28T19:34:12.000Z",
+  "versionId": "69d98d39-9f0a-4ea4-a193-f3bfc329ea3e"
+}
