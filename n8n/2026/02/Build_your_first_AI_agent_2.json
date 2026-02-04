@@ -1,0 +1,167 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Connect Gemini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Your First AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-09T16:27:41.715Z",
+  "id": "jXP63AG6FWJk0pgz",
+  "isArchived": true,
+  "meta": {
+    "templateId": "build_your_first_ai_agent",
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Build your first AI agent 2",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Transcríbeme este audio",
+        "options": {
+          "systemMessage": "=<role>\nEres un transcriptor de audio, sabes todos los idiomas y transcribes el audio que te envían\n</role>\n\n<instructions>\n<goal>\nlo único que haras es escuchar el audio y transcribirlo\n</goal>\n\n<context>\n### How I Work\nSoy un modelo de AI que transcribe audio\n"
+        }
+      },
+      "id": "332af12a-45ab-4e5d-8dab-da21ba2111f9",
+      "cid": "Ikx1Y2FzIFBleXJpbiI",
+      "name": "Your First AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "creator": "Lucas Peyrin",
+      "position": [
+        96,
+        -64
+      ],
+      "typeVersion": 2.2,
+      "notes": "© 2025 Lucas Peyrin"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "c218a5da-bec7-4034-8d2b-f4bca34e551e",
+      "cid": "Ikx1Y2FzIFBleXJpbiI",
+      "name": "Connect Gemini",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "creator": "Lucas Peyrin",
+      "position": [
+        96,
+        224
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xa3ZgVYezRtvHfLx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "notes": "© 2025 Lucas Peyrin"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        224
+      ],
+      "id": "fea4d23d-3f3b-4224-9a78-bacbd593b394",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "transcribir2",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryPropertyName": "audio"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        -64
+      ],
+      "id": "d2ba3ed6-c047-4f4b-a10a-c59250a4c9c5",
+      "name": "Webhook",
+      "webhookId": "932f28d8-9fb5-4493-aaaf-bf6e5b8f405b"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        448,
+        -64
+      ],
+      "id": "d1970f19-ce51-448c-8161-6e2089ba2d99",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-10-09T16:27:41.722Z",
+      "createdAt": "2025-10-09T16:27:41.722Z",
+      "role": "workflow:owner",
+      "workflowId": "jXP63AG6FWJk0pgz",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-09T16:47:34.000Z",
+  "versionId": "731c5281-fe96-4e31-8e70-6a287151b5e4"
+}
