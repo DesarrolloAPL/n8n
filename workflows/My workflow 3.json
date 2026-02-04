@@ -1,0 +1,139 @@
+{
+  "updatedAt": "2025-10-09T16:00:12.000Z",
+  "createdAt": "2025-10-09T15:01:39.067Z",
+  "id": "1k1gc3WtiJfGRsHV",
+  "name": "My workflow 3",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/transcribir-audio",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryPropertyName": "audio"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3e50c5c6-2fc6-4514-8a9c-4056648e72db",
+      "name": "Webhook",
+      "webhookId": "8956e699-7cf1-47bd-9454-ea62cdf69d96"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        592,
+        -16
+      ],
+      "id": "0c85f5e7-0024-4e50-923a-9afc133507ac",
+      "name": "Respond to Webhook",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f24ab16f-b64e-4200-b12f-7f2772ea09a6",
+              "name": "transcripcion",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        -16
+      ],
+      "id": "288f7561-34de-429d-9b5d-63998b28bb90",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "inputType": "binary",
+        "binaryPropertyName": "audio0",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "9c98ea87-db2a-493b-ba54-47cb65df2652",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xa3ZgVYezRtvHfLx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "09d18552-2210-4ba2-8778-a290585b432f",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-10-09T15:01:39.074Z",
+      "createdAt": "2025-10-09T15:01:39.074Z",
+      "role": "workflow:owner",
+      "workflowId": "1k1gc3WtiJfGRsHV",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
