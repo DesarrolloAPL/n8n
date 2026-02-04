@@ -1,0 +1,74 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Webhook - Recibir Datos": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-11-25T12:43:52.406Z",
+  "id": "Hi4gJ3dS2d6fOfER",
+  "isArchived": true,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "PruebaPDF",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generar-pdf-docs",
+        "options": {}
+      },
+      "id": "14f84db8-a07a-48b1-87da-5d1c0b88a141",
+      "name": "Webhook - Recibir Datos",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        -208
+      ],
+      "webhookId": "f7582a92-03fd-4a13-991e-b14ee6adbd5b"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-25T12:43:52.409Z",
+      "createdAt": "2025-11-25T12:43:52.409Z",
+      "role": "workflow:owner",
+      "workflowId": "Hi4gJ3dS2d6fOfER",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-29T13:12:44.332Z",
+      "createdAt": "2025-10-29T13:12:44.332Z",
+      "id": "45xfhDxxxasaqnRM",
+      "name": "PRUEBA"
+    },
+    {
+      "updatedAt": "2025-11-11T21:30:41.310Z",
+      "createdAt": "2025-11-11T21:30:41.310Z",
+      "id": "rEeAxuxADLe4crWM",
+      "name": "TEST"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-12-01T20:10:41.000Z",
+  "versionId": "b1ceaa30-cbbb-4870-ae37-fb22a5c98de5"
+}
