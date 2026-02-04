@@ -1,0 +1,938 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Telegram2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TYPING - ACTION",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TYPING - ACTION",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Telegram6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "No response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prompt too short",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram1": {
+      "main": [
+        [
+          {
+            "node": "Telegram4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram2": {
+      "main": [
+        [
+          {
+            "node": "NeurochainAI - Flux",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram3": {
+      "main": [
+        [
+          {
+            "node": "Telegram5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram6": {
+      "main": [
+        [
+          {
+            "node": "Telegram7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TYPING - ACTION": {
+      "main": [
+        [
+          {
+            "node": "NeurochainAI - REST API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NeurochainAI - Flux": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NeurochainAI - REST API": {
+      "main": [
+        [
+          {
+            "node": "AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-29T16:15:26.047Z",
+  "id": "eTISofzdUhnvmbhX",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "NeurochainAI Basic API Integration",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "id": "0c6e5d54-a339-43f5-b3e6-8ababddc9657",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [
+        -1888,
+        592
+      ],
+      "webhookId": "05885608-5344-4dcf-81ad-4550b9a01241",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "jsCode": "// O valor vem como um array com uma string, então precisamos pegar o primeiro item do array\nconst rawUrl = $json.choices[0].text;\n\n// Remover colchetes e aspas (se existirem) e pegar o primeiro elemento do array\nconst imageUrl = JSON.parse(rawUrl)[0];\n\nreturn {\n json: {\n imageUrl: imageUrl\n }\n};"
+      },
+      "id": "f75c556e-6454-4cc0-9b01-2514e4f676f4",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -64,
+        -16
+      ],
+      "notesInFlow": true,
+      "typeVersion": 2,
+      "notes": "Extract the URL from the previous node"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.imageUrl }}",
+        "options": {}
+      },
+      "id": "5b2de7c0-bc98-4e3e-8069-816e084827a5",
+      "name": "HTTP Request3",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        112,
+        -16
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "⌛",
+        "replyMarkup": "inlineKeyboard",
+        "additionalFields": {
+          "appendAttribution": false,
+          "reply_to_message_id": "={{ $('Telegram Trigger').item.json.message.message_id }}"
+        }
+      },
+      "id": "2d382aa6-c113-484e-8ae0-1ff7110f4b36",
+      "name": "Telegram2",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -656,
+        224
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "4fe091ed-d3ac-4d6f-9598-7b56901c13b1"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "=*Prompt:* `{{ $('Code1').item.json.cleanMessage }}`",
+          "parse_mode": "Markdown",
+          "reply_to_message_id": "={{ $('Telegram Trigger').item.json.message.message_id }}"
+        }
+      },
+      "id": "1b060813-39a5-41be-8d76-5ae4375f5bd4",
+      "name": "Telegram1",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        304,
+        -16
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "9ce2cc92-f9ee-4ab2-820f-6c06bdf38d5c"
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage",
+        "chatId": "={{ $('Telegram2').item.json.result.chat.id }}",
+        "messageId": "={{ $('Telegram2').item.json.result.message_id }}"
+      },
+      "id": "a851f229-f58e-4453-9c79-f9d7eedc2ac0",
+      "name": "Telegram4",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        480,
+        -16
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "04c89ba4-57cd-4afe-b22c-1b411bd063f6"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.error.message }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🔄 Retry",
+                    "additionalFields": {
+                      "callback_data": "=response= Fluxretry: {{ $('Code1').item.json.cleanMessage }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "reply_to_message_id": "={{ $('Telegram Trigger').item.json.message.message_id }}"
+        }
+      },
+      "id": "bad0eb08-c883-44de-bc82-e31dcb0cdece",
+      "name": "Telegram3",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        128,
+        416
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "c5172b77-51e4-49e6-ae13-54c0be1900fd"
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage",
+        "chatId": "={{ $('Telegram2').item.json.result.chat.id }}",
+        "messageId": "={{ $('Telegram2').item.json.result.message_id }}"
+      },
+      "id": "f3763d0e-e61a-4337-a304-8d032c6af937",
+      "name": "Telegram5",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        352,
+        416
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "6bd475ac-a42d-4ba1-934d-0ed3b4f37907"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=*Prompt too short*",
+        "replyMarkup": "inlineKeyboard",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown",
+          "reply_to_message_id": "={{ $('Telegram Trigger').item.json.message.message_id }}"
+        }
+      },
+      "id": "2c84e7f5-42ca-4d86-ae52-7d277b99fb5f",
+      "name": "Telegram6",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        128,
+        240
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "54a7f400-846d-4a07-bf03-c2dd2486525c"
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage",
+        "chatId": "={{ $('Telegram2').item.json.result.chat.id }}",
+        "messageId": "={{ $('Telegram2').item.json.result.message_id }}"
+      },
+      "id": "532df7f8-dc99-491c-a781-2a37e9af7aea",
+      "name": "Telegram7",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        352,
+        240
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "3e43600f-9e6c-486c-994f-49039953417e"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ncmb.neurochain.io/tasks/message",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer YOUR-API-KEY-HERE"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"model\": \"Meta-Llama-3.1-8B-Instruct-Q6_K.gguf\",\n \"prompt\": \"You must respond directly to the user's message, and the message the user sent you is the following message: {{ $('Telegram Trigger').item.json.message.text }}\",\n \"max_tokens\": 1024,\n \"temperature\": 0.6,\n \"top_p\": 0.95,\n \"frequency_penalty\": 0,\n \"presence_penalty\": 1.1\n}",
+        "options": {}
+      },
+      "id": "ac5a0046-b379-4a41-b896-8bf41cb664c2",
+      "name": "NeurochainAI - REST API",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -816,
+        992
+      ],
+      "typeVersion": 4.2,
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "sendChatAction",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "id": "b5584e34-cb31-4804-b37f-dee0158f0ba7",
+      "name": "TYPING - ACTION",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -1232,
+        992
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "63edce5c-01b2-4eed-ac88-fbef88773b7b"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.choices[0].text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown",
+          "reply_to_message_id": "={{ $('Telegram Trigger').item.json.message.message_id }}"
+        }
+      },
+      "id": "b77d6c08-59cc-4877-9be1-12357deef00a",
+      "name": "AI Response",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -496,
+        720
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "078470ad-3575-4fe4-a6b8-2fb01f7424a0"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=*No response from worker*",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown",
+          "reply_to_message_id": "={{ $('Telegram Trigger').item.json.message.message_id }}"
+        }
+      },
+      "id": "92dce837-5238-48bb-9c2a-212d709dea8f",
+      "name": "No response",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -288,
+        960
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "66c5ea13-b359-4959-9e37-de4846614fd7"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=*Prompt too short*",
+        "replyMarkup": "inlineKeyboard",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown",
+          "reply_to_message_id": "={{ $('Telegram Trigger').item.json.message.message_id }}"
+        }
+      },
+      "id": "e7b38023-d836-419b-8382-7f4c8b3dbc5f",
+      "name": "Prompt too short",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -288,
+        1120
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "02a656d8-5120-4ae2-a55a-d23ac69834c6"
+    },
+    {
+      "parameters": {
+        "content": "## ERROR",
+        "height": 347.9769162173868,
+        "width": 460.4333621829785,
+        "color": 3
+      },
+      "id": "8c5590c0-48f3-415d-8335-d171d125db76",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -544,
+        944
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.error.message }}",
+                    "rightValue": "=500 - \"{\\\"error\\\":true,\\\"msg\\\":\\\"No response from worker\\\"}\""
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "ef851d57-0618-4fe7-8469-a30971a05ee5",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    },
+                    "leftValue": "{{ $json.error.message }}",
+                    "rightValue": "400 - \"{\\\"error\\\":true,\\\"msg\\\":\\\"Prompt string is invalid\\\"}\""
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2b0aec49-27b8-44d2-8be7-cbc94b07c2c2",
+      "name": "Switch2",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        -528,
+        1104
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "content": "## SUCCESS\nThis node will send the AI ​​response directly to the Telegram chat.",
+        "height": 350.68162004785273,
+        "width": 459.0810102677459,
+        "color": 4
+      },
+      "id": "5837345a-7ee5-4e2f-8695-05b3c9ad1b70",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -544,
+        576
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## HTTP REQUEST\n\nReplace **MODEL** with the desired AI model from the NeurochainAI dashboard.\n\nReplace YOUR-API-KEY-HERE with your actual NeurochainAI API key.\n\n**Models:**\nMeta-Llama-3.1-8B-Instruct-Q8_0.gguf\nMeta-Llama-3.1-8B-Instruct-Q6_K.gguf\nMistral-7B-Instruct-v0.2-GPTQ-Neurochain-custom-io\nMistral-7B-Instruct-v0.2-GPTQ-Neurochain-custom\nMistral-7B-OpenOrca-GPTQ\nMistral-7B-Instruct-v0.1-gguf-q8_0.gguf\nMistral-7B-Instruct-v0.2-GPTQ\ningredient-extractor-mistral-7b-instruct-v0.1-gguf-q8_0.gguf",
+        "height": 705.0354263931183,
+        "width": 411.78262099325127,
+        "color": 5
+      },
+      "id": "899b7cfa-e487-48d9-82c5-a382106b9a61",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -976,
+        576
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## This node removes the /flux prefix.",
+        "height": 535.7153791682382,
+        "width": 236.80242230495116,
+        "color": 6
+      },
+      "id": "c61e2603-ccd6-459b-afbe-46e426b0b5c4",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -976,
+        -64
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## ERROR",
+        "height": 403.9345258807414,
+        "width": 593.1328365275054,
+        "color": 3
+      },
+      "id": "51552df0-327a-4333-86d4-f96a74348983",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        80,
+        160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## HTTP REQUEST\n\nReplace **MODEL** with the desired AI model from the NeurochainAI dashboard.\n\nReplace YOUR-API-KEY-HERE with your actual NeurochainAI API key.\n\n**Models:**\nsuper-flux1-schnell-gguf\nflux1-schnell-gguf",
+        "height": 538.7613862505775,
+        "width": 384.60321058533617,
+        "color": 5
+      },
+      "id": "36779635-26c3-4b3b-b7d2-4c1cf751d589",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -464,
+        -64
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "jsCode": "// Acessa a mensagem original que está em $json.message.text\nconst userMessage = $json.message.text;\n\n// Remover o prefixo '/flux' e qualquer espaço extra após o comando\nconst cleanMessage = userMessage.replace(/^\\/flux\\s*/, '');\n\n// Retornar a mensagem limpa\nreturn {\n json: {\n cleanMessage: cleanMessage\n }\n};"
+      },
+      "id": "7299c2ca-015a-43c3-b278-f8acfc6bafd3",
+      "name": "Code1",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -928,
+        192
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "content": "## This node sends an emoji to indicate that the prompt is being processed.",
+        "height": 535.7153791682384
+      },
+      "id": "399f5c17-3045-4cc4-ab53-c2a22e8e390c",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        -64
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## SUCCESS\nThis node will send the AI ​​response directly to the Telegram chat.",
+        "height": 350.68162004785273,
+        "width": 596.5768511548468,
+        "color": 4
+      },
+      "id": "d8ebde8f-a4cd-4345-b0c1-078743a1f484",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        80,
+        -208
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": false,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "f5df9de6-0650-42e4-9a6e-8d1becf16c51",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/flux"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Flux"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": false,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "a49ecf63-3f68-4e21-a015-d0cbc227c230",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "@NCNAI_BOT"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": false,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "d5ac0c9f-858a-4040-b72e-ae7b522ff60e",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.message.chat.type }}",
+                    "rightValue": "private"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "DM Text"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "id": "ae507678-5b3e-48d3-a86a-3384cd4a869e",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        -1568,
+        592
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "content": "## Instructions for Using the Template\nFollow these steps to set up and use this template:\n\n**Create a Telegram Bot**:\n- Open Telegram and search for BotFather.\n- Use the ``/newbot`` command to create your bot.\n- Follow the prompts and copy the Token provided at the end.\n-------------\n**Obtain a NeurochainAI API Key:**\n\n- Log in to the NeurochainAI Dashboard.\n- Generate an **API Key** under the Inference As Service section.\n- Ensure your account has sufficient credits for usage.\n-------------\n **Configure Telegram Nodes:**\n- Locate all Telegram nodes in the workflow and add your Telegram Bot Token to each node's credentials.\n-------------\n**Configure HTTP Request Nodes:**\n\n- Identify the NeurochainAI - Rest API and NeurochainAI - Flux nodes in the workflow.\nIn each node:\n- Enter your desired model in the Model field.\n- Replace ``YOUR-API-KEY-HERE`` with your API Key in the headers or configuration section.\n-------------\n**Save and Test:**\n- Save the workflow in N8N.\n- Test the workflow by interacting with your Telegram bot to trigger text and image generation tasks.",
+        "height": 648.96526541807,
+        "width": 623.6530631885605
+      },
+      "id": "93cf62b2-d212-4512-8e93-2dc4694e0834",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1984,
+        -96
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ncmb.neurochain.io/tasks/tti",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer YOUR-API-KEY-HERE"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"model\": \"flux1-schnell-gguf\",\n \"prompt\": \"Generate an image that matches exactly this: {{ $('Code1').item.json.cleanMessage }}\",\n \"size\": \"1024x1024\",\n \"quality\": \"standard\",\n \"n\": 1,\n \"seed\": {{ Math.floor(Math.random() * 999) + 1 }}\n}",
+        "options": {}
+      },
+      "id": "a30cd72d-0fdf-4cd2-8cd1-ae85d36b861f",
+      "name": "NeurochainAI - Flux",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -320,
+        256
+      ],
+      "typeVersion": 4.2,
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.error.message }}",
+                    "rightValue": "400 - \"{\\\"error\\\":true,\\\"msg\\\":\\\"Prompt string is invalid\\\"}\""
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "ef851d57-0618-4fe7-8469-a30971a05ee5",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    },
+                    "leftValue": "{{ $json.error.message }}",
+                    "rightValue": "400 - \"{\\\"error\\\":true,\\\"msg\\\":\\\"Prompt string is invalid\\\"}\""
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "efd949d0-1557-45ec-ae10-265f5ac47cee",
+      "name": "Switch1",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        -48,
+        320
+      ],
+      "typeVersion": 3.2
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-10-29T16:15:26.052Z",
+      "createdAt": "2025-10-29T16:15:26.052Z",
+      "role": "workflow:owner",
+      "workflowId": "eTISofzdUhnvmbhX",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-29T16:15:28.522Z",
+      "createdAt": "2025-10-29T16:15:28.522Z",
+      "id": "SXSmcxRnDNnpjVpu",
+      "name": "Personal"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-29T16:41:02.000Z",
+  "versionId": "dd32b347-5cbe-46e2-87fd-1ce8f4bf749d"
+}
