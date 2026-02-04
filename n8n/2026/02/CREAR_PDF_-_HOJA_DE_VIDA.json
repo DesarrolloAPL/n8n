@@ -1,0 +1,213 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-01-08T19:12:31.000Z",
+    "createdAt": "2026-01-08T19:11:59.252Z",
+    "versionId": "e77c9303-7f39-4c1d-8dbf-1fb024f29437",
+    "workflowId": "kmnG9tmV1Kv6dGlS",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "generar-pdf-hoja-vida",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -64,
+          -32
+        ],
+        "id": "d0636c84-a88e-400c-a397-b3e899a0c7eb",
+        "name": "Webhook",
+        "webhookId": "4c7e788f-e789-4ad0-9099-4cdb7937d45a"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "EXEC sp_ObtenerHojaDeVidaJSON @cedula = '{{ $json.body.cedula }}'"
+        },
+        "type": "n8n-nodes-base.microsoftSql",
+        "typeVersion": 1.1,
+        "position": [
+          160,
+          -32
+        ],
+        "id": "cc70f526-1db6-479b-84be-49b1f920bb97",
+        "name": "Microsoft SQL",
+        "credentials": {
+          "microsoftSql": {
+            "id": "wKQTlyd8tnchigCR",
+            "name": "Microsoft SQL - BD Prueba"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "allIncomingItems",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          368,
+          -32
+        ],
+        "id": "e7581c79-0332-4768-91d5-b2d089424035",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Microsoft SQL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Microsoft SQL": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Andres Orozco",
+    "name": "Version 2",
+    "description": "",
+    "autosaved": false
+  },
+  "activeVersionId": "e77c9303-7f39-4c1d-8dbf-1fb024f29437",
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Microsoft SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Microsoft SQL": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-28T19:47:32.586Z",
+  "id": "kmnG9tmV1Kv6dGlS",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "CREAR PDF - HOJA DE VIDA",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generar-pdf-hoja-vida",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -64,
+        -32
+      ],
+      "id": "d0636c84-a88e-400c-a397-b3e899a0c7eb",
+      "name": "Webhook",
+      "webhookId": "4c7e788f-e789-4ad0-9099-4cdb7937d45a"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "EXEC sp_ObtenerHojaDeVidaJSON @cedula = '{{ $json.body.cedula }}'"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        -32
+      ],
+      "id": "cc70f526-1db6-479b-84be-49b1f920bb97",
+      "name": "Microsoft SQL",
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        368,
+        -32
+      ],
+      "id": "e7581c79-0332-4768-91d5-b2d089424035",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-28T19:47:32.592Z",
+      "createdAt": "2025-11-28T19:47:32.592Z",
+      "role": "workflow:owner",
+      "workflowId": "kmnG9tmV1Kv6dGlS",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-29T13:12:44.332Z",
+      "createdAt": "2025-10-29T13:12:44.332Z",
+      "id": "45xfhDxxxasaqnRM",
+      "name": "PRUEBA"
+    },
+    {
+      "updatedAt": "2025-11-11T21:30:41.310Z",
+      "createdAt": "2025-11-11T21:30:41.310Z",
+      "id": "rEeAxuxADLe4crWM",
+      "name": "TEST"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-08T19:14:11.922Z",
+  "versionId": "e77c9303-7f39-4c1d-8dbf-1fb024f29437"
+}
