@@ -1,0 +1,264 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Lee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lee": {
+      "main": [
+        [
+          {
+            "node": "Extrae",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ejecución": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrae": {
+      "main": [
+        [
+          {
+            "node": "Python",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Python": {
+      "main": [
+        [
+          {
+            "node": "Convierte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convierte": {
+      "main": [
+        [
+          {
+            "node": "Escribe en PC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-06T16:36:44.254Z",
+  "id": "6a9S0YyEKOJTSuKi",
+  "isArchived": true,
+  "meta": null,
+  "name": "TRANSFORMACIÓN DATOS",
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b4a69b9a-9a7f-4e11-b57e-f6c980340651",
+      "name": "Wait",
+      "webhookId": "269a46b3-8c64-44dd-a8ed-fffbabef874a"
+    },
+    {
+      "parameters": {
+        "content": "## Inicio\nAquí se lee el archivo desde un trigger de carpeta al ser añadido o modificado\n",
+        "height": 272,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -112
+      ],
+      "id": "89901d8b-b819-448f-9312-f0a087f40a9e",
+      "name": "Inicio"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.path.replace(/\\\\/g, \"/\") }}",
+        "options": {
+          "dataPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        112,
+        0
+      ],
+      "id": "0dca685d-923d-4798-83cc-6caee55b00de",
+      "name": "Lee"
+    },
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "path": "C:/Pruebasn8n/REPORTEKATHE",
+        "events": [
+          "add",
+          "change"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "a6926d9c-d541-46b3-b759-807f82f6bff8",
+      "name": "Ejecución"
+    },
+    {
+      "parameters": {
+        "content": "## Manipulación\nAquí se manipula el archivo a criterio del usuario y se convierte en un xlsx\n",
+        "height": 272,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -112
+      ],
+      "id": "2fc98f4c-417e-4b21-9945-87ce2a0c63a8",
+      "name": "Extrar"
+    },
+    {
+      "parameters": {
+        "options": {
+          "headerRow": true,
+          "includeEmptyCells": false
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        304,
+        0
+      ],
+      "id": "226dea6a-1414-440d-9a0e-4d507f4554be",
+      "name": "Extrae"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import csv\nimport io\nimport re\nimport unicodedata\nimport base64\nfrom datetime import datetime\n\ndef limpiar_nombre(nombre):\n    \"\"\"Limpia tildes, caracteres invisibles, BOM y normaliza encabezados.\"\"\"\n    if not isinstance(nombre, str):\n        return \"\"\n    nombre = unicodedata.normalize(\"NFKD\", nombre).encode(\"ascii\", \"ignore\").decode(\"ascii\")\n    nombre = (\n        nombre.replace(\"\\ufeff\", \"\")\n        .replace(\"﻿\", \"\")\n        .strip()\n        .lower()\n    )\n    nombre = re.sub(r\"[\\s\\W]+\", \" \", nombre).strip()\n    return nombre\n\n# === 1️⃣ Obtener input ===\nitems = _input.all()\noutput = []\n\n# === 2️⃣ Extraer el contenido del CSV (modo manual o automático) ===\nfield_name = list(items[0].json.keys())[0]\ncsv_data = \"\"\n\n# MODO AUTOMÁTICO: archivo binario\nif \"binary\" in items[0] and \"data\" in items[0][\"binary\"]:\n    # Leer el contenido base64 del archivo y decodificarlo\n    binary_data = items[0][\"binary\"][\"data\"][\"data\"]\n    csv_data = base64.b64decode(binary_data).decode(\"utf-8\", errors=\"ignore\")\n\n# MODO MANUAL: archivo de texto\nelse:\n    first_value = items[0].json[field_name]\n    if len(items) > 1:\n        csv_data = field_name + \"\\n\" + \"\\n\".join(item.json[field_name] for item in items)\n    else:\n        csv_data = first_value\n\ncsv_data = csv_data.strip()\n\n# === 🔹 2.1 Eliminar primera línea \"SEP=\" (siempre presente) ===\ncsv_lines = csv_data.splitlines()\n\nif csv_lines and csv_lines[0].strip().upper().startswith(\"SEP=\"):\n    csv_lines.pop(0)\n\n# Siempre usar tabulador\ndelimiter = '\\t'\n\ncsv_data = \"\\n\".join(csv_lines)\n\n# === 3️⃣ Leer CSV ===\nreader = csv.reader(io.StringIO(csv_data), delimiter=delimiter)\nrows = list(reader)\nif not rows or len(rows) < 2:\n    return []  # CSV vacío o inválido\n\nheaders_raw = rows[0]\nheaders_clean = [limpiar_nombre(h) for h in headers_raw]\ndata_rows = rows[1:]\n\n# === 4️⃣ Rehacer registros ===\ncleaned_rows = []\nfor r in data_rows:\n    d = {}\n    for k, v in zip(headers_clean, r):\n        d[k] = v.strip()\n    cleaned_rows.append(d)\n\n# === 5️⃣ Detectar columna del vehículo ===\nvh_keys = [\"vh.\", \"vh\", \"vehiculo\", \"vehículo\"]\nvh_column = next((k for k in headers_clean if any(k.startswith(v) for v in vh_keys)), None)\n\n# === 6️⃣ Configuración ===\ncols_to_remove = [\n    \"conductor\", \"inicio de viaje\", \"fecha de finalizacion\",\n    \"tiempo de viaje minutos\", \"despachador\"\n]\nvh_excluir = {\"CB015\", \"CB059\", \"CB064\", \"CB089\", \"CB100\", \"CB157\", \"CB232\"}\nformatos_posibles = [\n    \"%d/%m/%Y %I:%M:%S %p\", \"%d/%m/%Y %I:%M %p\",\n    \"%d/%m/%Y %H:%M:%S\", \"%d/%m/%Y %H:%M\",\n    \"%Y-%m-%d %H:%M:%S\", \"%Y-%m-%d %H:%M\",\n    \"%d-%m-%Y %H:%M:%S\", \"%d-%m-%Y %H:%M\"\n]\n\n# === 7️⃣ Procesar filas ===\nfor row in cleaned_rows:\n    estado = row.get(\"estado del viaje\", \"\").strip().lower()\n    if estado == \"cancelado\":\n        continue\n\n    itinerario = row.get(\"itinerario\", \"\").strip().lower()\n    if itinerario == \"circular sur\":\n        continue\n\n    vh = \"\"\n    if vh_column:\n        vh = row.get(vh_column, \"\").strip().upper()\n    if vh in vh_excluir or not vh:\n        continue\n\n    hora_prog = row.get(\"hora programada\", \"\").strip()\n    fecha_prog = \"\"\n    hora_24 = \"\"\n    if hora_prog:\n        for fmt in formatos_posibles:\n            try:\n                dt = datetime.strptime(hora_prog, fmt)\n                fecha_prog = dt.strftime(\"%d/%m/%Y\")\n                hora_24 = dt.strftime(\"%H:%M:%S\")\n                break\n            except ValueError:\n                continue\n\n    itinerario_limpio = row.get(\"itinerario\", \"\")\n    if isinstance(itinerario_limpio, str):\n        itinerario_limpio = itinerario_limpio.lower().replace(\"madrugada\", \"\").strip().upper()\n\n    for col in cols_to_remove:\n        row.pop(col, None)\n\n    row[\"numero\"] = 1\n\n    nuevo_orden = {\n        \"Fecha programada\": fecha_prog,\n        \"Vh.\": vh,\n        \"Hora programada (24h)\": hora_24,\n        \"Itinerario\": itinerario_limpio,\n        \"Numero\": row.get(\"numero\", 1),\n        \"Pasajeros movilizados\": row.get(\"pasajeros movilizados\", \"\"),\n        \"Estado del Viaje\": row.get(\"estado del viaje\", \"\")\n    }\n\n    output.append({\"json\": nuevo_orden})\n\n# === 8️⃣ Devolver resultado final ===\nreturn output\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "368ae2c6-9961-4dd7-8e25-f011f2030f82",
+      "name": "Python",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        528,
+        0
+      ],
+      "id": "67ad1c88-8179-4e35-8ff7-a7760953f0fd",
+      "name": "Convierte"
+    },
+    {
+      "parameters": {
+        "content": "## Guarda\nSe guarda el xlsx creado en una carpeta especifica del PC\n",
+        "height": 272,
+        "width": 256,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        -112
+      ],
+      "id": "4924941d-3ad0-4556-87b0-7702517af16c",
+      "name": "Extrar1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "C:/Pruebasn8n/Output/salida.xlsx",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        768,
+        0
+      ],
+      "id": "58ec95c2-b34f-4c7f-8813-217da4ea3fad",
+      "name": "Escribe en PC"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-10-06T16:36:44.256Z",
+      "createdAt": "2025-10-06T16:36:44.256Z",
+      "role": "workflow:owner",
+      "workflowId": "6a9S0YyEKOJTSuKi",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-06T16:36:53.446Z",
+      "createdAt": "2025-10-06T16:36:53.446Z",
+      "id": "FPs5r2lezGCWvdZT",
+      "name": "KATHE"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-14T16:22:26.000Z",
+  "versionId": "6cf29eb4-a1d8-4886-a431-630fbac06ca2"
+}
