@@ -1,0 +1,212 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2025-11-28T19:17:16.429Z",
+    "createdAt": "2025-11-28T19:17:16.429Z",
+    "versionId": "19f9b30c-709a-46fc-8414-44fa2e2c757d",
+    "workflowId": "jNs6r3guIASyvrdi",
+    "nodes": [
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "select [dbo].[usuario].[nombre],[dbo].[usuario].[cedula],[dbo].[usuario].[estado] from [dbo].[usuario] where [dbo].[usuario].[estado] = 'pendiente'"
+        },
+        "type": "n8n-nodes-base.microsoftSql",
+        "typeVersion": 1.1,
+        "position": [
+          208,
+          0
+        ],
+        "id": "83a00856-89c8-4886-8b3d-8614f003cfe3",
+        "name": "Microsoft SQL",
+        "credentials": {
+          "microsoftSql": {
+            "id": "wKQTlyd8tnchigCR",
+            "name": "Microsoft SQL - BD Prueba"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "allIncomingItems",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          432,
+          16
+        ],
+        "id": "bcd9114c-62d9-4b3c-835f-4a66db696407",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "usuariopendienteconsulta",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          16,
+          16
+        ],
+        "id": "2514a16f-8ded-44b6-86b3-f59abeeb3bad",
+        "name": "Webhook",
+        "webhookId": "75229fc5-0e4b-4315-9968-0ad9d7f3d429"
+      }
+    ],
+    "connections": {
+      "Microsoft SQL": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Microsoft SQL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Andres Orozco",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "activeVersionId": "19f9b30c-709a-46fc-8414-44fa2e2c757d",
+  "connections": {
+    "Microsoft SQL": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Microsoft SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-21T13:40:30.531Z",
+  "id": "jNs6r3guIASyvrdi",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "CONSULTA BD - USUARIO PENDIENTE",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select [dbo].[usuario].[nombre],[dbo].[usuario].[cedula],[dbo].[usuario].[estado] from [dbo].[usuario] where [dbo].[usuario].[estado] = 'pendiente'"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "83a00856-89c8-4886-8b3d-8614f003cfe3",
+      "name": "Microsoft SQL",
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        432,
+        16
+      ],
+      "id": "bcd9114c-62d9-4b3c-835f-4a66db696407",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "usuariopendienteconsulta",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        16
+      ],
+      "id": "2514a16f-8ded-44b6-86b3-f59abeeb3bad",
+      "name": "Webhook",
+      "webhookId": "75229fc5-0e4b-4315-9968-0ad9d7f3d429"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-21T13:40:30.537Z",
+      "createdAt": "2025-11-21T13:40:30.537Z",
+      "role": "workflow:owner",
+      "workflowId": "jNs6r3guIASyvrdi",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-29T13:12:44.332Z",
+      "createdAt": "2025-10-29T13:12:44.332Z",
+      "id": "45xfhDxxxasaqnRM",
+      "name": "PRUEBA"
+    },
+    {
+      "updatedAt": "2025-11-12T19:46:15.693Z",
+      "createdAt": "2025-11-12T19:46:15.693Z",
+      "id": "s96wOANoNXqa9VfN",
+      "name": "FUNCIONAL"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-28T19:17:16.000Z",
+  "versionId": "19f9b30c-709a-46fc-8414-44fa2e2c757d"
+}
