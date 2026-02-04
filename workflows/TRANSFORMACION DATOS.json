@@ -1,0 +1,406 @@
+{
+  "updatedAt": "2025-10-14T16:35:01.000Z",
+  "createdAt": "2025-10-14T15:56:04.175Z",
+  "id": "Kbv0qya0XN7Psj4b",
+  "name": "TRANSFORMACION DATOS",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "path": "C:\\Pruebasn8n\\REPORTEKATHE",
+        "events": [
+          "add"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        16
+      ],
+      "id": "40cf3210-fe7a-463a-bfe4-06ba5702f234",
+      "name": "Local File Trigger"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        16
+      ],
+      "id": "2053408e-84c5-41d8-ae04-86f74c8c6534",
+      "name": "Wait",
+      "webhookId": "d964e005-2a8b-40a4-836b-33e97ca83a4c"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.path.replace(/\\\\/g, \"/\") }}",
+        "options": {
+          "dataPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d2e07548-db9b-47cf-bd14-da1a1cf82482",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "jsCode": "const binaryData = $input.item.binary.data.data;\nconst buf = Buffer.from(binaryData, 'base64');\nconst text = buf.toString('utf-8');\n\nconst lines = text.split(/\\r?\\n/);\nif (lines.length > 0 && lines[0].trim().toUpperCase().startsWith(\"SEP=\")) {\n  lines.shift();\n}\n\nconst cleaned = lines.join(\"\\n\");\nconst delim = lines[0].includes(\"\\t\") ? \"\\t\" : \",\";\n\nreturn {\n  json: {\n    cleaned,\n    delimiter: delim\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        16
+      ],
+      "id": "a392d53e-5eb9-4a6f-999c-bf80f3355590",
+      "name": "Code- Limpia datos"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import pandas as pd\nfrom datetime import datetime\n\ndef limpiar_nombre(nombre):\n    import re\n    import unicodedata\n    if not isinstance(nombre, str):\n        return \"\"\n    nombre = unicodedata.normalize(\"NFKD\", nombre).encode(\"ascii\", \"ignore\").decode(\"ascii\")\n    nombre = nombre.replace(\"\\ufeff\", \"\").replace(\"﻿\", \"\").strip().lower()\n    nombre = re.sub(r\"[\\s\\W]+\", \" \", nombre).strip()\n    return nombre\n\ntext_csv = items[0].json.get('cleaned', '')\ndelimiter = items[0].json.get('delimiter', ',')\n\nif not text_csv:\n    return []\n\nfrom io import StringIO\ndf = pd.read_csv(StringIO(text_csv), delimiter=delimiter)\ndf.columns = [limpiar_nombre(c) for c in df.columns]\n\nvh_excluir = {\"CB015\", \"CB059\", \"CB064\", \"CB089\", \"CB100\", \"CB157\", \"CB232\"}\ncols_to_remove = [\"conductor\", \"inicio de viaje\", \"fecha de finalizacion\", \"tiempo de viaje minutos\", \"despachador\"]\n\ndf = df[~df[\"estado del viaje\"].str.lower().eq(\"cancelado\")]\ndf = df[~df[\"itinerario\"].str.lower().eq(\"circular sur\")]\n\nvh_keys = [\"vh.\", \"vh\", \"vehiculo\", \"vehículo\"]\nvh_col = next((col for col in df.columns if any(col.startswith(k) for k in vh_keys)), None)\nif vh_col:\n    df[vh_col] = df[vh_col].str.upper()\n    df = df[~df[vh_col].isin(vh_excluir)]\n    df = df[df[vh_col].notna() & (df[vh_col] != \"\")]\n\ndf = df.drop(columns=[c for c in cols_to_remove if c in df.columns], errors='ignore')\n\nformatos_posibles = [\n    \"%d/%m/%Y %I:%M:%S %p\", \"%d/%m/%Y %I:%M %p\",\n    \"%d/%m/%Y %H:%M:%S\", \"%d/%m/%Y %H:%M\",\n    \"%Y-%m-%d %H:%M:%S\", \"%Y-%m-%d %H:%M\",\n    \"%d-%m-%Y %H:%M:%S\", \"%d-%m-%Y %H:%M\"\n]\n\ndef parse_fecha_hora(s):\n    for fmt in formatos_posibles:\n        try:\n            return datetime.strptime(s, fmt)\n        except:\n            continue\n    return None\n\ndf[\"fecha_programada\"] = df[\"hora programada\"].apply(lambda x: parse_fecha_hora(x).strftime(\"%d/%m/%Y\") if pd.notnull(x) and parse_fecha_hora(x) else \"\")\ndf[\"hora_programada_24h\"] = df[\"hora programada\"].apply(lambda x: parse_fecha_hora(x).strftime(\"%H:%M:%S\") if pd.notnull(x) and parse_fecha_hora(x) else \"\")\n\ndf[\"itinerario\"] = df[\"itinerario\"].str.lower().str.replace(\"madrugada\", \"\").str.strip().str.upper()\ndf[\"numero\"] = 1\n\ncolumnas_finales = [\"fecha_programada\", vh_col or \"vh\", \"hora_programada_24h\", \"itinerario\", \"numero\", \"pasajeros movilizados\", \"estado del viaje\"]\n\n# Asegurarse que las columnas existan y estén en el orden correcto\ncolumnas_finales = [c for c in columnas_finales if c in df.columns]\ndf_final = df[columnas_finales].copy()\n\n# Forzar orden exacto en el CSV exportado\n# Convertimos el DataFrame completo a una lista de dicts en orden de columnas\noutput = []\nfor _, row in df_final.iterrows():\n    ordered_row = {col: row[col] for col in columnas_finales if col in row and pd.notna(row[col])}\n    output.append({\"json\": ordered_row})\n\nreturn output"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        16
+      ],
+      "id": "5c10af75-f758-4c28-95e0-73c31dd83ac1",
+      "name": "Code - Procesa datos"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import pandas as pd\nimport io\nimport base64\nfrom datetime import datetime\n\n# Recibir datos procesados del nodo anterior\ndata_rows = [item.get('json', {}) for item in items]\n\nif not data_rows:\n    return []\n\n# Definir el orden deseado de columnas\norden_columnas = [\n    \"fecha_programada\",\n    \"vh\",\n    \"hora_programada_24h\",\n    \"itinerario\",\n    \"numero\",\n    \"pasajeros movilizados\",\n    \"estado del viaje\"\n]\n\n# Crear el DataFrame asegurando que todas las columnas existan, incluso vacías\ndf = pd.DataFrame([{col: row.get(col, \"\") for col in orden_columnas} for row in data_rows])\n\n# Convertir a CSV en memoria con separador punto y coma\ncsv_buffer = io.StringIO()\ncsv_buffer.write(\"SEP=;\\n\")  # Para que Excel reconozca el separador\ndf.to_csv(csv_buffer, index=False, sep=';')\n\ncsv_string = csv_buffer.getvalue()\n\n# Codificar a base64 (n8n espera base64)\ncsv_base64 = base64.b64encode(csv_string.encode('utf-8')).decode('utf-8')\n\n# Crear nombre dinámico del archivo\nnombre_archivo = f\"reporte_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv\"\n\n# Retornar salida binaria lista para Write Node\nreturn [{\n    \"binary\": {\n        \"data\": {\n            \"data\": csv_base64,\n            \"mimeType\": \"text/csv\",\n            \"fileName\": nombre_archivo\n        }\n    },\n    \"json\": {\n        \"columnas\": orden_columnas,\n        \"filas\": len(df)\n    }\n}]\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        16
+      ],
+      "id": "3cfc0911-af9d-47ed-ac2c-bc9096ba3967",
+      "name": "Code- Crea un CSV",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "C:\\Pruebasn8n\\REPORTEKATHE\\REPORTE_FILTRADO.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        832,
+        16
+      ],
+      "id": "6a69186d-7f54-4253-9c22-30da986cc6e9",
+      "name": "Write File to Disk"
+    }
+  ],
+  "connections": {
+    "Local File Trigger": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Code- Limpia datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code- Limpia datos": {
+      "main": [
+        [
+          {
+            "node": "Code - Procesa datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Procesa datos": {
+      "main": [
+        [
+          {
+            "node": "Code- Crea un CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code- Crea un CSV": {
+      "main": [
+        [
+          {
+            "node": "Write File to Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "5330e661-33b1-43fb-bc91-7db8e37f4a40",
+  "activeVersionId": "5330e661-33b1-43fb-bc91-7db8e37f4a40",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-10-14T15:56:04.178Z",
+      "createdAt": "2025-10-14T15:56:04.178Z",
+      "role": "workflow:owner",
+      "workflowId": "Kbv0qya0XN7Psj4b",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-18T14:56:23.263Z",
+    "createdAt": "2025-11-18T14:56:23.263Z",
+    "versionId": "5330e661-33b1-43fb-bc91-7db8e37f4a40",
+    "workflowId": "Kbv0qya0XN7Psj4b",
+    "nodes": [
+      {
+        "parameters": {
+          "triggerOn": "folder",
+          "path": "C:\\Pruebasn8n\\REPORTEKATHE",
+          "events": [
+            "add"
+          ],
+          "options": {}
+        },
+        "type": "n8n-nodes-base.localFileTrigger",
+        "typeVersion": 1,
+        "position": [
+          -416,
+          16
+        ],
+        "id": "40cf3210-fe7a-463a-bfe4-06ba5702f234",
+        "name": "Local File Trigger"
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -208,
+          16
+        ],
+        "id": "2053408e-84c5-41d8-ae04-86f74c8c6534",
+        "name": "Wait",
+        "webhookId": "d964e005-2a8b-40a4-836b-33e97ca83a4c"
+      },
+      {
+        "parameters": {
+          "fileSelector": "={{ $json.path.replace(/\\\\/g, \"/\") }}",
+          "options": {
+            "dataPropertyName": "data"
+          }
+        },
+        "type": "n8n-nodes-base.readWriteFile",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "d2e07548-db9b-47cf-bd14-da1a1cf82482",
+        "name": "Read/Write Files from Disk"
+      },
+      {
+        "parameters": {
+          "jsCode": "const binaryData = $input.item.binary.data.data;\nconst buf = Buffer.from(binaryData, 'base64');\nconst text = buf.toString('utf-8');\n\nconst lines = text.split(/\\r?\\n/);\nif (lines.length > 0 && lines[0].trim().toUpperCase().startsWith(\"SEP=\")) {\n  lines.shift();\n}\n\nconst cleaned = lines.join(\"\\n\");\nconst delim = lines[0].includes(\"\\t\") ? \"\\t\" : \",\";\n\nreturn {\n  json: {\n    cleaned,\n    delimiter: delim\n  }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          192,
+          16
+        ],
+        "id": "a392d53e-5eb9-4a6f-999c-bf80f3355590",
+        "name": "Code- Limpia datos"
+      },
+      {
+        "parameters": {
+          "language": "python",
+          "pythonCode": "import pandas as pd\nfrom datetime import datetime\n\ndef limpiar_nombre(nombre):\n    import re\n    import unicodedata\n    if not isinstance(nombre, str):\n        return \"\"\n    nombre = unicodedata.normalize(\"NFKD\", nombre).encode(\"ascii\", \"ignore\").decode(\"ascii\")\n    nombre = nombre.replace(\"\\ufeff\", \"\").replace(\"﻿\", \"\").strip().lower()\n    nombre = re.sub(r\"[\\s\\W]+\", \" \", nombre).strip()\n    return nombre\n\ntext_csv = items[0].json.get('cleaned', '')\ndelimiter = items[0].json.get('delimiter', ',')\n\nif not text_csv:\n    return []\n\nfrom io import StringIO\ndf = pd.read_csv(StringIO(text_csv), delimiter=delimiter)\ndf.columns = [limpiar_nombre(c) for c in df.columns]\n\nvh_excluir = {\"CB015\", \"CB059\", \"CB064\", \"CB089\", \"CB100\", \"CB157\", \"CB232\"}\ncols_to_remove = [\"conductor\", \"inicio de viaje\", \"fecha de finalizacion\", \"tiempo de viaje minutos\", \"despachador\"]\n\ndf = df[~df[\"estado del viaje\"].str.lower().eq(\"cancelado\")]\ndf = df[~df[\"itinerario\"].str.lower().eq(\"circular sur\")]\n\nvh_keys = [\"vh.\", \"vh\", \"vehiculo\", \"vehículo\"]\nvh_col = next((col for col in df.columns if any(col.startswith(k) for k in vh_keys)), None)\nif vh_col:\n    df[vh_col] = df[vh_col].str.upper()\n    df = df[~df[vh_col].isin(vh_excluir)]\n    df = df[df[vh_col].notna() & (df[vh_col] != \"\")]\n\ndf = df.drop(columns=[c for c in cols_to_remove if c in df.columns], errors='ignore')\n\nformatos_posibles = [\n    \"%d/%m/%Y %I:%M:%S %p\", \"%d/%m/%Y %I:%M %p\",\n    \"%d/%m/%Y %H:%M:%S\", \"%d/%m/%Y %H:%M\",\n    \"%Y-%m-%d %H:%M:%S\", \"%Y-%m-%d %H:%M\",\n    \"%d-%m-%Y %H:%M:%S\", \"%d-%m-%Y %H:%M\"\n]\n\ndef parse_fecha_hora(s):\n    for fmt in formatos_posibles:\n        try:\n            return datetime.strptime(s, fmt)\n        except:\n            continue\n    return None\n\ndf[\"fecha_programada\"] = df[\"hora programada\"].apply(lambda x: parse_fecha_hora(x).strftime(\"%d/%m/%Y\") if pd.notnull(x) and parse_fecha_hora(x) else \"\")\ndf[\"hora_programada_24h\"] = df[\"hora programada\"].apply(lambda x: parse_fecha_hora(x).strftime(\"%H:%M:%S\") if pd.notnull(x) and parse_fecha_hora(x) else \"\")\n\ndf[\"itinerario\"] = df[\"itinerario\"].str.lower().str.replace(\"madrugada\", \"\").str.strip().str.upper()\ndf[\"numero\"] = 1\n\ncolumnas_finales = [\"fecha_programada\", vh_col or \"vh\", \"hora_programada_24h\", \"itinerario\", \"numero\", \"pasajeros movilizados\", \"estado del viaje\"]\n\n# Asegurarse que las columnas existan y estén en el orden correcto\ncolumnas_finales = [c for c in columnas_finales if c in df.columns]\ndf_final = df[columnas_finales].copy()\n\n# Forzar orden exacto en el CSV exportado\n# Convertimos el DataFrame completo a una lista de dicts en orden de columnas\noutput = []\nfor _, row in df_final.iterrows():\n    ordered_row = {col: row[col] for col in columnas_finales if col in row and pd.notna(row[col])}\n    output.append({\"json\": ordered_row})\n\nreturn output"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          400,
+          16
+        ],
+        "id": "5c10af75-f758-4c28-95e0-73c31dd83ac1",
+        "name": "Code - Procesa datos"
+      },
+      {
+        "parameters": {
+          "language": "python",
+          "pythonCode": "import pandas as pd\nimport io\nimport base64\nfrom datetime import datetime\n\n# Recibir datos procesados del nodo anterior\ndata_rows = [item.get('json', {}) for item in items]\n\nif not data_rows:\n    return []\n\n# Definir el orden deseado de columnas\norden_columnas = [\n    \"fecha_programada\",\n    \"vh\",\n    \"hora_programada_24h\",\n    \"itinerario\",\n    \"numero\",\n    \"pasajeros movilizados\",\n    \"estado del viaje\"\n]\n\n# Crear el DataFrame asegurando que todas las columnas existan, incluso vacías\ndf = pd.DataFrame([{col: row.get(col, \"\") for col in orden_columnas} for row in data_rows])\n\n# Convertir a CSV en memoria con separador punto y coma\ncsv_buffer = io.StringIO()\ncsv_buffer.write(\"SEP=;\\n\")  # Para que Excel reconozca el separador\ndf.to_csv(csv_buffer, index=False, sep=';')\n\ncsv_string = csv_buffer.getvalue()\n\n# Codificar a base64 (n8n espera base64)\ncsv_base64 = base64.b64encode(csv_string.encode('utf-8')).decode('utf-8')\n\n# Crear nombre dinámico del archivo\nnombre_archivo = f\"reporte_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv\"\n\n# Retornar salida binaria lista para Write Node\nreturn [{\n    \"binary\": {\n        \"data\": {\n            \"data\": csv_base64,\n            \"mimeType\": \"text/csv\",\n            \"fileName\": nombre_archivo\n        }\n    },\n    \"json\": {\n        \"columnas\": orden_columnas,\n        \"filas\": len(df)\n    }\n}]\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          592,
+          16
+        ],
+        "id": "3cfc0911-af9d-47ed-ac2c-bc9096ba3967",
+        "name": "Code- Crea un CSV",
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "operation": "write",
+          "fileName": "C:\\Pruebasn8n\\REPORTEKATHE\\REPORTE_FILTRADO.csv",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.readWriteFile",
+        "typeVersion": 1,
+        "position": [
+          832,
+          16
+        ],
+        "id": "6a69186d-7f54-4253-9c22-30da986cc6e9",
+        "name": "Write File to Disk"
+      }
+    ],
+    "connections": {
+      "Local File Trigger": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Read/Write Files from Disk",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read/Write Files from Disk": {
+        "main": [
+          [
+            {
+              "node": "Code- Limpia datos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code- Limpia datos": {
+        "main": [
+          [
+            {
+              "node": "Code - Procesa datos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code - Procesa datos": {
+        "main": [
+          [
+            {
+              "node": "Code- Crea un CSV",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code- Crea un CSV": {
+        "main": [
+          [
+            {
+              "node": "Write File to Disk",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": [
+    {
+      "updatedAt": "2025-10-06T16:36:53.446Z",
+      "createdAt": "2025-10-06T16:36:53.446Z",
+      "id": "FPs5r2lezGCWvdZT",
+      "name": "KATHE"
+    },
+    {
+      "updatedAt": "2025-10-14T16:22:00.560Z",
+      "createdAt": "2025-10-14T16:22:00.560Z",
+      "id": "b0k6GesmQcUUmj0F",
+      "name": "Datos Sonar"
+    },
+    {
+      "updatedAt": "2025-10-14T16:34:39.008Z",
+      "createdAt": "2025-10-14T16:34:39.008Z",
+      "id": "lC9jAlHqvxlSGKVl",
+      "name": "APL"
+    }
+  ]
+}
