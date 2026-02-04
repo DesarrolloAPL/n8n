@@ -1,0 +1,30 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {},
+  "createdAt": "2025-11-18T14:30:20.242Z",
+  "id": "1dGtOABn89wIYc7l",
+  "isArchived": true,
+  "meta": null,
+  "name": "PruebaAssistantAI",
+  "nodes": [],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-18T14:30:20.246Z",
+      "createdAt": "2025-11-18T14:30:20.246Z",
+      "role": "workflow:owner",
+      "workflowId": "1dGtOABn89wIYc7l",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-24T18:16:59.000Z",
+  "versionId": "f74ef08c-b01b-437b-ab2f-e100dafc60da"
+}
