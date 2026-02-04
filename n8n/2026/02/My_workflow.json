@@ -1,0 +1,132 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Local File Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-01T13:17:29.713Z",
+  "id": "XTKi1CqzsDqbe6K4",
+  "isArchived": true,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "path": "C:/Pruebasn8n/REPORTEKATHE/",
+        "events": [
+          "add"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a75bfa33-0582-41ae-a7c0-71be17879af1",
+      "name": "Local File Trigger"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=C:/Pruebasn8n/REPORTEKATHE/prueba.csv",
+        "options": {
+          "dataPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "e08b948e-1b47-462b-9f67-d48e8af46185",
+      "name": "Read/Write Files from Disk",
+      "alwaysOutputData": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "515a80ab-189f-48f0-a18a-53c74da3c215",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "items = _input.all()\n\nfor item in items:\n    for key, val in item.json.items():\n        if isinstance(val, str):\n            # Mostramos solo las primeras 200 letras para ver cómo vienen los datos\n            print(\"Primera línea bruta:\")\n            print(val.splitlines()[0][:200].encode(\"utf-8\"))\n            break\n    break\n\nreturn items\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "c822f24d-ad7a-486a-ad6b-583ec62b2a03",
+      "name": "Code in Python (Beta)",
+      "alwaysOutputData": true
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-10-01T13:17:29.717Z",
+      "createdAt": "2025-10-01T13:17:29.717Z",
+      "role": "workflow:owner",
+      "workflowId": "XTKi1CqzsDqbe6K4",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-09T16:00:36.000Z",
+  "versionId": "601264c4-f0cd-4daa-9bd1-1c78fb3e5230"
+}
