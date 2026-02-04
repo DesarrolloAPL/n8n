@@ -1,0 +1,37 @@
+{
+  "updatedAt": "2025-11-18T15:09:26.000Z",
+  "createdAt": "2025-11-12T21:40:14.181Z",
+  "id": "BCo6nMcaHHqzaFix",
+  "name": "prueba",
+  "active": false,
+  "isArchived": true,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "383828ef-001d-49e5-8d4c-d3ffe142225f",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-12T21:40:14.186Z",
+      "createdAt": "2025-11-12T21:40:14.186Z",
+      "role": "workflow:owner",
+      "workflowId": "BCo6nMcaHHqzaFix",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2025-11-12T21:40:21.198Z",
+      "createdAt": "2025-11-12T21:40:21.198Z",
+      "id": "32PknSKSV7d2VMCR",
+      "name": "andres"
+    }
+  ]
+}
