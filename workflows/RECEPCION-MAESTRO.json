@@ -1,0 +1,249 @@
+{
+  "updatedAt": "2025-11-28T20:38:02.000Z",
+  "createdAt": "2025-11-28T19:06:50.464Z",
+  "id": "K9wViqi5B9E7jpfL",
+  "name": "RECEPCION-MAESTRO",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "proceso-firma-completado",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -16,
+        -32
+      ],
+      "id": "ce0651b7-e3a8-4240-a0f6-de34118e23ac",
+      "name": "Webhook",
+      "webhookId": "8100e9f8-e7c5-4228-a54c-5c9834abe115"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/generar-pdf-hoja-vida",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "cedula",
+              "value": "={{ $json.body.cedula }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        224,
+        -256
+      ],
+      "id": "46c1b429-9637-400f-a451-3fad1c83e007",
+      "name": "Llama a generar pdf hoja de vida"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.1.137:5678/webhook/actualizarusuarioterminado",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "cedula",
+              "value": "={{$json.body.cedula}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        224,
+        80
+      ],
+      "id": "9306a7a8-c9cf-4cdb-9def-2047a96aa7c8",
+      "name": "Llama a actualizar estado usuario"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Llama a actualizar estado usuario",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Llama a generar pdf hoja de vida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "user-agent": "axios/1.13.2",
+            "content-length": "18",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "localhost:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "cedula": "12345"
+          },
+          "webhookUrl": "http://localhost:5678/webhook/proceso-firma-completado",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "f1197ec5-4ac0-4068-85d2-d1d00bc92b4c",
+  "activeVersionId": "f1197ec5-4ac0-4068-85d2-d1d00bc92b4c",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-11-28T19:06:50.469Z",
+      "createdAt": "2025-11-28T19:06:50.469Z",
+      "role": "workflow:owner",
+      "workflowId": "K9wViqi5B9E7jpfL",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-28T20:38:02.466Z",
+    "createdAt": "2025-11-28T20:38:02.466Z",
+    "versionId": "f1197ec5-4ac0-4068-85d2-d1d00bc92b4c",
+    "workflowId": "K9wViqi5B9E7jpfL",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "proceso-firma-completado",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -16,
+          -32
+        ],
+        "id": "ce0651b7-e3a8-4240-a0f6-de34118e23ac",
+        "name": "Webhook",
+        "webhookId": "8100e9f8-e7c5-4228-a54c-5c9834abe115"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://localhost:5678/webhook/generar-pdf-hoja-vida",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "cedula",
+                "value": "={{ $json.body.cedula }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          224,
+          -256
+        ],
+        "id": "46c1b429-9637-400f-a451-3fad1c83e007",
+        "name": "Llama a generar pdf hoja de vida"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://192.168.1.137:5678/webhook/actualizarusuarioterminado",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "cedula",
+                "value": "={{$json.body.cedula}}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          224,
+          80
+        ],
+        "id": "9306a7a8-c9cf-4cdb-9def-2047a96aa7c8",
+        "name": "Llama a actualizar estado usuario"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Llama a actualizar estado usuario",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Llama a generar pdf hoja de vida",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Andres Orozco",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": [
+    {
+      "updatedAt": "2025-10-29T13:12:44.332Z",
+      "createdAt": "2025-10-29T13:12:44.332Z",
+      "id": "45xfhDxxxasaqnRM",
+      "name": "PRUEBA"
+    },
+    {
+      "updatedAt": "2025-11-11T21:30:41.310Z",
+      "createdAt": "2025-11-11T21:30:41.310Z",
+      "id": "rEeAxuxADLe4crWM",
+      "name": "TEST"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ]
+}
