@@ -1,0 +1,241 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Wait 3s": {
+      "main": [
+        [
+          {
+            "node": "Read Audio File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Audio File": {
+      "main": [
+        [
+          {
+            "node": "Upload Audio to AssemblyAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Audio to AssemblyAI": {
+      "main": [
+        [
+          {
+            "node": "Start Transcription",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Transcription": {
+      "main": [
+        [
+          {
+            "node": "Wait 15s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 15s": {
+      "main": [
+        [
+          {
+            "node": "Check Transcription Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Transcription Status": {
+      "main": [
+        [
+          {
+            "node": "Set Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local File Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Wait 3s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-14T16:34:37.132Z",
+  "id": "jbFBU8EDSUlpK5Cu",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Audio → AssemblyAI Transcription",
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "81b5ab1a-bc03-43ec-abf1-47bfa1a42581",
+      "name": "Wait 3s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        -832
+      ],
+      "webhookId": "622fd190-81f3-49fc-9f97-c937a719c059"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.path.replace(/\\\\/g, \"/\") }}",
+        "options": {}
+      },
+      "id": "dd0e71f4-c22c-4ff6-9491-9b4ed344b4bc",
+      "name": "Read Audio File",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        -832
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.assemblyai.com/v2/upload",
+        "options": {}
+      },
+      "id": "d5279633-7a74-4655-bf61-2849233d40b9",
+      "name": "Upload Audio to AssemblyAI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1984,
+        -832
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.assemblyai.com/v2/transcript",
+        "options": {}
+      },
+      "id": "7b56ba61-cecf-437a-b0b9-4d69b10983c1",
+      "name": "Start Transcription",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2240,
+        -832
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "id": "e4e88d41-d049-4307-a985-960b4b3a9434",
+      "name": "Wait 15s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2480,
+        -832
+      ],
+      "webhookId": "c2b71711-c981-4e53-8ca9-e3dec302a36f"
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://api.assemblyai.com/v2/transcript/' + $json.id }}",
+        "options": {}
+      },
+      "id": "387ea84c-e57d-401a-a731-d16d5427d1e5",
+      "name": "Check Transcription Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2736,
+        -832
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ca8fb21b-0258-4cb9-bdae-a99466a3bf35",
+      "name": "Set Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        2976,
+        -832
+      ]
+    },
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "path": "C:\\Pruebasn8n\\AUDIOTEXTO",
+        "events": [
+          "add"
+        ],
+        "options": {}
+      },
+      "id": "97ab2186-7462-4798-93f6-3e996f179b41",
+      "name": "Local File Trigger1",
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        -832
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-10-14T16:34:37.134Z",
+      "createdAt": "2025-10-14T16:34:37.134Z",
+      "role": "workflow:owner",
+      "workflowId": "jbFBU8EDSUlpK5Cu",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-14T16:34:45.871Z",
+      "createdAt": "2025-10-14T16:34:45.871Z",
+      "id": "GojzHRoKePAagu1a",
+      "name": "PROCESODICSIPLINARIO"
+    },
+    {
+      "updatedAt": "2025-10-14T16:34:39.008Z",
+      "createdAt": "2025-10-14T16:34:39.008Z",
+      "id": "lC9jAlHqvxlSGKVl",
+      "name": "APL"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-14T19:47:27.000Z",
+  "versionId": "355af979-3208-4d4f-bfed-7c958e4a7f5a"
+}
