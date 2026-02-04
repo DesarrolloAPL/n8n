@@ -1,0 +1,91 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-12-01T20:44:00.077Z",
+  "id": "m1ChBlj41gYmdBJY",
+  "isArchived": true,
+  "meta": null,
+  "name": "GENERAR PDF - HOJA DE VIDA",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "crearpdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1a62b846-52bb-4ae2-8560-2f3f6e45e07a",
+      "name": "Webhook",
+      "webhookId": "1d34f497-51a9-4471-84d6-79910e693918"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "from docxtpl import DocxTemplate\nfrom docx2pdf import convert\nimport os\n\ndef generar_hoja_vida(datos):\n    # 1. Cargar la plantilla .docx\n    # Asegúrate de que 'hoja_vida_template.docx' esté en la misma carpeta\n    doc = DocxTemplate(\"hoja_vida_template.docx\")\n\n    # 2. Renderizar el documento con los datos (Contexto)\n    # docxtpl reemplaza todas las llaves {{ }} con los valores del diccionario\n    doc.render(datos)\n\n    # 3. Guardar el .docx temporal lleno\n    nombre_docx = \"hoja_vida_rellena.docx\"\n    doc.save(nombre_docx)\n    print(f\"Word generado: {nombre_docx}\")\n\n    # 4. Convertir a PDF\n    # Nota: Esto requiere tener MS Word instalado si estás en Windows/Mac\n    nombre_pdf = \"Hoja_de_Vida_Final.pdf\"\n    try:\n        convert(nombre_docx, nombre_pdf)\n        print(f\"PDF generado exitosamente: {nombre_pdf}\")\n    except Exception as e:\n        print(f\"Error creando el PDF: {e}\")\n        print(\"Asegúrate de tener Microsoft Word instalado o usar LibreOffice.\")\n\n# --- DATOS DE EJEMPLO (Simulando lo que vendría de tu base de datos) ---\ncontexto = {\n    # Variables Simples\n    \"logo_empresa\": \"APL\", # Si usas texto, o puedes insertar imágenes con InlineImage\n    \"nombre_completo\": \"JUAN PÉREZ\",\n    \"cedula\": \"1.234.567.890\",\n    \"direccion\": \"Calle 123 # 45-67\",\n    \"telefono\": \"300 123 4567\",\n    \n    # Variables de Checkbox (En Word usa {{ x_nuevo }} dentro del cuadrito)\n    \"x_nuevo\": \"X\", \n    \"x_reingreso\": \"\", \n    \n    # LISTA DINÁMICA DE ESTUDIOS (Esto soluciona tu problema de 2 vs 5 títulos)\n    \"lista_estudios\": [\n        {\n            \"institucion\": \"Universidad de Antioquia\",\n            \"titulo\": \"Ingeniero de Sistemas\",\n            \"fecha\": \"2018\",\n            \"ciudad\": \"Medellín\"\n        },\n        {\n            \"institucion\": \"SENA\",\n            \"titulo\": \"Tecnólogo en Gestión\",\n            \"fecha\": \"2015\",\n            \"ciudad\": \"Bello\"\n        },\n        {\n            \"institucion\": \"Coursera\",\n            \"titulo\": \"Curso de Python Avanzado\",\n            \"fecha\": \"2023\",\n            \"ciudad\": \"Virtual\"\n        }\n    ],\n\n    # LISTA DINÁMICA DE EXPERIENCIA\n    \"lista_experiencia\": [\n        {\n            \"empresa\": \"Transportes SAS\",\n            \"cargo\": \"Conductor\",\n            \"jefe\": \"Pedro Gomez\",\n            \"tiempo\": \"2 Años\"\n        },\n        {\n            \"empresa\": \"Logística Total\",\n            \"cargo\": \"Auxiliar\",\n            \"jefe\": \"Maria Lopez\",\n            \"tiempo\": \"1 Año\"\n        }\n    ]\n}\n\n# Ejecutar la función\nif __name__ == \"__main__\":\n    generar_hoja_vida(contexto)"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5c00769c-d9db-426c-9f02-86e8baec7876",
+      "name": "Code in Python (Beta)"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-12-01T20:44:00.082Z",
+      "createdAt": "2025-12-01T20:44:00.082Z",
+      "role": "workflow:owner",
+      "workflowId": "m1ChBlj41gYmdBJY",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-29T13:12:44.332Z",
+      "createdAt": "2025-10-29T13:12:44.332Z",
+      "id": "45xfhDxxxasaqnRM",
+      "name": "PRUEBA"
+    },
+    {
+      "updatedAt": "2025-11-11T21:30:41.310Z",
+      "createdAt": "2025-11-11T21:30:41.310Z",
+      "id": "rEeAxuxADLe4crWM",
+      "name": "TEST"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-12-01T20:46:38.000Z",
+  "versionId": "cb97cf46-7cd7-4634-95a4-45d795e3134e"
+}
