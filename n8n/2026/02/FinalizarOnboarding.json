@@ -1,0 +1,256 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2025-11-28T19:17:53.261Z",
+    "createdAt": "2025-11-28T19:17:53.261Z",
+    "versionId": "1764a530-0c5e-4f58-bed1-bf97aac4565b",
+    "workflowId": "kvl8HsbElUYr15SX",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "finalizaronboarding",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "11335cab-80f7-4b30-90ed-e97a155a8fe9",
+        "name": "Webhook",
+        "webhookId": "e76c5292-a93d-4cc4-a486-574fe93af9df"
+      },
+      {
+        "parameters": {
+          "jsCode": "// --- CÓDIGO PARA EL NODO JAVASCRIPT ---\n\n   // 1. Obtener el cuerpo del webhook\n   // En N8N, $input.first().json.body suele contener el payload del POST\n   let data = $input.first().json.body;\n\n   // 2. NORMALIZACIÓN: Si 'data' es un array (común si N8N interpreta la entrada como lista),\n   // extraemos el primer elemento. El SQL espera un solo objeto raíz {...}\n   if (Array.isArray(data)) {\n       // Si el array está vacío, usar un objeto vacío para evitar crash\n       data = data.length > 0 ? data[0] : {};\n   }\n\n   // 3. Convertir el objeto a String JSON\n   let jsonString = JSON.stringify(data);\n   \n   // 4. ESCAPAR COMILLAS SIMPLES\n   // SQL Server usa comillas simples para delimitar strings.\n   // Si el JSON contiene \"O'Connor\", romperá la query.\n   // Reemplazamos ' por '' (dos comillas simples) para escaparlo correctamente en T-SQL.\n   jsonString = jsonString.replace(/'/g, \"''\");\n\n   // 5. Devolver el resultado\n   return {\n       json: {\n           sqlReadyJson: jsonString\n       }\n   };"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          208,
+          0
+        ],
+        "id": "014a2625-9658-4c6e-b1e9-0bf9e68aa10c",
+        "name": "Code in JavaScript"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "EXEC [dbo].[sp_GuardarOnboarding] @JsonData = '{{ $json.sqlReadyJson }}';"
+        },
+        "type": "n8n-nodes-base.microsoftSql",
+        "typeVersion": 1.1,
+        "position": [
+          416,
+          0
+        ],
+        "id": "c6c4e31f-c697-47a8-9f3f-ba9a761c8a0a",
+        "name": "Microsoft SQL",
+        "credentials": {
+          "microsoftSql": {
+            "id": "wKQTlyd8tnchigCR",
+            "name": "Microsoft SQL - BD Prueba"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          624,
+          0
+        ],
+        "id": "68ed5fa6-7ba4-418b-b378-73204b7f711e",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Code in JavaScript",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code in JavaScript": {
+        "main": [
+          [
+            {
+              "node": "Microsoft SQL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Microsoft SQL": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Andres Orozco",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "activeVersionId": "1764a530-0c5e-4f58-bed1-bf97aac4565b",
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Microsoft SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Microsoft SQL": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-24T19:06:57.417Z",
+  "id": "kvl8HsbElUYr15SX",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "FinalizarOnboarding",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "finalizaronboarding",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "11335cab-80f7-4b30-90ed-e97a155a8fe9",
+      "name": "Webhook",
+      "webhookId": "e76c5292-a93d-4cc4-a486-574fe93af9df"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- CÓDIGO PARA EL NODO JAVASCRIPT ---\n\n   // 1. Obtener el cuerpo del webhook\n   // En N8N, $input.first().json.body suele contener el payload del POST\n   let data = $input.first().json.body;\n\n   // 2. NORMALIZACIÓN: Si 'data' es un array (común si N8N interpreta la entrada como lista),\n   // extraemos el primer elemento. El SQL espera un solo objeto raíz {...}\n   if (Array.isArray(data)) {\n       // Si el array está vacío, usar un objeto vacío para evitar crash\n       data = data.length > 0 ? data[0] : {};\n   }\n\n   // 3. Convertir el objeto a String JSON\n   let jsonString = JSON.stringify(data);\n   \n   // 4. ESCAPAR COMILLAS SIMPLES\n   // SQL Server usa comillas simples para delimitar strings.\n   // Si el JSON contiene \"O'Connor\", romperá la query.\n   // Reemplazamos ' por '' (dos comillas simples) para escaparlo correctamente en T-SQL.\n   jsonString = jsonString.replace(/'/g, \"''\");\n\n   // 5. Devolver el resultado\n   return {\n       json: {\n           sqlReadyJson: jsonString\n       }\n   };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "014a2625-9658-4c6e-b1e9-0bf9e68aa10c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "EXEC [dbo].[sp_GuardarOnboarding] @JsonData = '{{ $json.sqlReadyJson }}';"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "c6c4e31f-c697-47a8-9f3f-ba9a761c8a0a",
+      "name": "Microsoft SQL",
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "68ed5fa6-7ba4-418b-b378-73204b7f711e",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-24T19:06:57.423Z",
+      "createdAt": "2025-11-24T19:06:57.423Z",
+      "role": "workflow:owner",
+      "workflowId": "kvl8HsbElUYr15SX",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-10-29T13:12:44.332Z",
+      "createdAt": "2025-10-29T13:12:44.332Z",
+      "id": "45xfhDxxxasaqnRM",
+      "name": "PRUEBA"
+    },
+    {
+      "updatedAt": "2025-11-11T21:30:41.310Z",
+      "createdAt": "2025-11-11T21:30:41.310Z",
+      "id": "rEeAxuxADLe4crWM",
+      "name": "TEST"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-28T19:17:53.000Z",
+  "versionId": "1764a530-0c5e-4f58-bed1-bf97aac4565b"
+}
