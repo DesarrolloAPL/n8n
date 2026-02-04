@@ -1,0 +1,442 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2025-11-24T19:15:24.241Z",
+    "createdAt": "2025-11-24T19:15:24.241Z",
+    "versionId": "7d9f9706-d354-4337-a66d-8623ba38a191",
+    "workflowId": "3RNJNfoSbQWcrgN9",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "guardarnuevousuario",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "7c263423-eabb-47fb-924e-3e4289890462",
+        "name": "Webhook",
+        "webhookId": "49f25283-5c80-40d2-9ee0-16b29fe4e8b4"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO recepcion.dbo.usuario (cedula, nombre, rol, contraseña, puestoId, estado) VALUES({{ $('Webhook').item.json.body.cedula }}, '{{ $('Webhook').item.json.body.nombres }}', 'nuevo', '{{ $('Webhook').item.json.body.cedula }}', '{{ $('Webhook').item.json.body.puestoId }}', '{{ $('Webhook').item.json.body.estado }}');"
+        },
+        "type": "n8n-nodes-base.microsoftSql",
+        "typeVersion": 1.1,
+        "position": [
+          528,
+          128
+        ],
+        "id": "7a2df514-9349-45b2-8660-4c3a905da5ec",
+        "name": "Microsoft SQL",
+        "credentials": {
+          "microsoftSql": {
+            "id": "wKQTlyd8tnchigCR",
+            "name": "Microsoft SQL - BD Prueba"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          704,
+          144
+        ],
+        "id": "bac12277-37a0-4e5c-95fe-ecb454a43105",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "EXEC usp_VerificarUsuarioPorCedula {{ $json.body.cedula }}"
+        },
+        "type": "n8n-nodes-base.microsoftSql",
+        "typeVersion": 1.1,
+        "position": [
+          176,
+          16
+        ],
+        "id": "014d97f7-90f2-41f4-89e5-cf32068e10f4",
+        "name": "Microsoft SQL1",
+        "credentials": {
+          "microsoftSql": {
+            "id": "wKQTlyd8tnchigCR",
+            "name": "Microsoft SQL - BD Prueba"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "71f616f8-8163-4c1b-b0e4-3a576aeadcae",
+                "leftValue": "={{ $json.Existe }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          336,
+          16
+        ],
+        "id": "715a29f5-9813-42b1-9d95-31eee02357ba",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "Error, la cedula ya esta registrada, si es algún error comunícate con el Administrador. ",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          624,
+          -64
+        ],
+        "id": "dfa8296f-1a1a-4ce0-b81e-390b9f90558f",
+        "name": "Respond to Webhook1"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Microsoft SQL1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Microsoft SQL": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Microsoft SQL1": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Microsoft SQL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond to Webhook1": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "authors": "Andres Orozco",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "activeVersionId": "7d9f9706-d354-4337-a66d-8623ba38a191",
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Microsoft SQL1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Microsoft SQL": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Microsoft SQL1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Microsoft SQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-11-11T21:35:19.722Z",
+  "id": "3RNJNfoSbQWcrgN9",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "GUARDAR NUEVO USUARIO",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "guardarnuevousuario",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7c263423-eabb-47fb-924e-3e4289890462",
+      "name": "Webhook",
+      "webhookId": "49f25283-5c80-40d2-9ee0-16b29fe4e8b4"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO recepcion.dbo.usuario (cedula, nombre, rol, contraseña, puestoId, estado) VALUES({{ $('Webhook').item.json.body.cedula }}, '{{ $('Webhook').item.json.body.nombres }}', 'nuevo', '{{ $('Webhook').item.json.body.cedula }}', '{{ $('Webhook').item.json.body.puestoId }}', '{{ $('Webhook').item.json.body.estado }}');"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        528,
+        128
+      ],
+      "id": "7a2df514-9349-45b2-8660-4c3a905da5ec",
+      "name": "Microsoft SQL",
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        704,
+        144
+      ],
+      "id": "bac12277-37a0-4e5c-95fe-ecb454a43105",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "EXEC usp_VerificarUsuarioPorCedula {{ $json.body.cedula }}"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        16
+      ],
+      "id": "014d97f7-90f2-41f4-89e5-cf32068e10f4",
+      "name": "Microsoft SQL1",
+      "credentials": {
+        "microsoftSql": {
+          "id": "wKQTlyd8tnchigCR",
+          "name": "Microsoft SQL - BD Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "71f616f8-8163-4c1b-b0e4-3a576aeadcae",
+              "leftValue": "={{ $json.Existe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        16
+      ],
+      "id": "715a29f5-9813-42b1-9d95-31eee02357ba",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Error, la cedula ya esta registrada, si es algún error comunícate con el Administrador. ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        624,
+        -64
+      ],
+      "id": "dfa8296f-1a1a-4ce0-b81e-390b9f90558f",
+      "name": "Respond to Webhook1"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "user-agent": "axios/1.13.2",
+            "content-length": "124",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "192.168.1.137:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "nombres": "Conductor Prueba  Nombre",
+            "cedula": "876",
+            "puestoId": "f8aee1c9-4c74-463b-b030-7c4e01e8193e",
+            "estado": "pendiente"
+          },
+          "webhookUrl": "http://localhost:5678/webhook/guardarnuevousuario",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "updatedAt": "2025-11-11T21:35:19.727Z",
+      "createdAt": "2025-11-11T21:35:19.727Z",
+      "role": "workflow:owner",
+      "workflowId": "3RNJNfoSbQWcrgN9",
+      "projectId": "qybvWgNPA3kFWQla"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2025-11-11T21:30:37.655Z",
+      "createdAt": "2025-11-11T21:30:37.655Z",
+      "id": "j5HaHGDV2jbmNS27",
+      "name": "NUEVA APP"
+    },
+    {
+      "updatedAt": "2025-11-12T19:46:15.693Z",
+      "createdAt": "2025-11-12T19:46:15.693Z",
+      "id": "s96wOANoNXqa9VfN",
+      "name": "FUNCIONAL"
+    },
+    {
+      "updatedAt": "2025-11-06T20:00:50.275Z",
+      "createdAt": "2025-11-06T20:00:50.275Z",
+      "id": "sBaCTV37uy8iwtwg",
+      "name": "Recepcion"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-24T19:15:24.000Z",
+  "versionId": "7d9f9706-d354-4337-a66d-8623ba38a191"
+}
